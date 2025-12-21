@@ -28,7 +28,7 @@ flowchart LR
 
 ## Usage
 
-Follow the installation guide, then review each jupyter notebook in `/examples`.
+Follow the installation guide, then review each jupyter notebook in `/examples`. This project uses an anthropic api key, but can be configured to use any LLM supported by langchain.
 
 ## Installation
 
