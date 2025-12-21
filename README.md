@@ -4,12 +4,7 @@
 
 ## Overview
 
-Process mining is a methodology to identify workflows from event logs and analyze them to identify process anomalies, process delays, or to just visualize the process.
-
-Process mining requires columnar data containing a case id, activity name, and timestamp. The process mining algorithm(s) then recreate a timeflow of the process, using each case id to recreate a trace.
-
-The PM4PY library implements the process mining algorithms using a combination of pandas and numpy, and this library provides some example of using PM4PY.
-
+Process mining is a methodology to identify workflows from event logs and analyze them to identify process anomalies, process delays, or to just visualize the process. Process mining requires columnar data containing a case id, activity name, and timestamp. The process mining algorithm(s) then recreate a timeflow of the process, using each case id to recreate a trace. The PM4PY library implements the process mining algorithms using a combination of pandas and numpy, and this library provides some example of using PM4PY.
 
 ![Example Image](example_petri.svg)
 **Figure 1: An Example Visualization Produced from PM4PY**
