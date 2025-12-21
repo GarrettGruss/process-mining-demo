@@ -1,0 +1,60 @@
+{
+    "events": [
+        {
+            "content": "Purchase order submitted by Sarah Chen - Springfield Mega Mall Construction Project. Need 12 precast concrete footers, spec F-2400x800x600mm. Order ref: #234123. Budget approved by Frank in accounting. Rush delivery requested for Phase 2 foundation work.",
+            "timestamp": "2011-01-01T09:15:23.000+01:00"
+        },
+        {
+            "content": "RE: PO 234123 - Quote Confirmation\n\nHi Sarah,\n\nThanks for reaching out! We can definitely handle your order for the precast footers (order number 234123). Lead time is looking like 5-6 days for production plus shipping. I'll get Tom in engineering to review the specs and get back to you by EOD.\n\nBest,\nJennifer Martinez\nSales Rep - Titan Precast Solutions",
+            "timestamp": "2011-01-01T14:32:00.000+01:00"
+        },
+        {
+            "content": "order #234123 approved for production - tom R reviewed dwgs, all specs check out. assigning to production line B, supervisor: Marcus Johnson. materials already in stock so we're good to go. -Jennifer",
+            "timestamp": "2011-01-02T08:45:00.000+01:00"
+        },
+        {
+            "content": "Production log 01/03/2011: Started casting for order two-three-four-one-two-three. Marcus J supervising. Forms set up on line B. Concrete mix batch #CC-8834 approved by QC (Rodriguez). Weather conditions optimal. Est completion: 01/05/2011",
+            "timestamp": "2011-01-03T06:30:00.000+01:00"
+        },
+        {
+            "content": "QC INSPECTION REPORT\nDate: Jan 4 2011\nInspector: Carlos Rodriguez  \nOrder: 234123\nItems: 12x precast concrete footers\nStatus: 10 units PASS, 2 units MINOR SURFACE DEFECTS (cosmetic only, within tolerance)\nApproved for shipment: YES\nNotes: small air pockets on units #7 and #11, does not affect structural integrity per engineer Tom R.",
+            "timestamp": "2011-01-04T15:20:00.000+01:00"
+        },
+        {
+            "content": "Scheduling shipment for order 234-123 (Springfield project). Customer contact: Sarah Chen. Polaris Shipping assigned - driver Jim Patterson, truck #PS-447. Pickup from warehouse scheduled 01/06 morning. Delivery ETA 01/07 afternoon. -Logistics Dept",
+            "timestamp": "2011-01-05T11:05:00.000+01:00"
+        },
+        {
+            "content": "loaded 12 footers onto truck ps447 this morning around 7am. order 234123. all units secured with straps and padding. bill of lading signed by marcus. driver jim heading out now. - warehouse guy (pete)",
+            "timestamp": "2011-01-06T07:22:00.000+01:00"
+        },
+        {
+            "content": "DELAY NOTICE - Truck PS-447 (driver: Jim Patterson)\nRoute: Titan Precast -> Springfield Construction Site\nCargo: Order #234123 (12x concrete footers)\nIssue: Major accident on I-95 southbound, complete closure. Rerouting via State Route 42 will add 8-10 hours to delivery. New ETA: Thursday 01/08 instead of Friday 01/07.\nCustomer notification: REQUIRED\n- Polaris Dispatch",
+            "timestamp": "2011-01-06T14:15:00.000+01:00"
+        },
+        {
+            "content": "Hey mike, this is jim with polaris shipping. I'm calling to let you know your ughhh order 234123 has been delayed until thursday. Again, that's ughh 234123 order. Okay give me a call back when you're available, bye.",
+            "timestamp": "2011-01-08T12:05:00.000+01:00"
+        },
+        {
+            "content": "Voicemail transcript: \"Hi Jim, this is Sarah Chen, not Mike - I think you have the wrong contact? Anyway, I got the message about order 234123 being delayed. Thursday works but we really need it by 2pm because the crane is scheduled for 3pm. Can you confirm timing? Call me back at 555-0142. Thanks.\"",
+            "timestamp": "2011-01-08T13:47:00.000+01:00"
+        },
+        {
+            "content": "DELIVERY CONFIRMATION\nTruck: PS-447 | Driver: Jim Patterson  \nOrder #: 234123\nDelivered to: Springfield Mega Mall Construction Site, Loading Zone C\nReceived by: Mike Torres (Site Foreman)\nTimestamp: 01/08/2011 13:35\nCondition: All 12 units inspected on-site, minor cosmetic defects noted on 2 units (previously documented), accepted by foreman\nSignature: M. Torres\nNotes: \"Crane operator Danny already on site, starting install immediately\"",
+            "timestamp": "2011-01-08T13:35:00.000+01:00"
+        },
+        {
+            "content": "Install Report - Phase 2 Foundation\nDate: 1/8/11\nCrane Operator: Danny Wu\nFooters from order 234123 installed in grid positions A1-A12 per engineering drawings. Installation supervised by Mike Torres (foreman). All units level and aligned within specs. Concrete pour for grade beams scheduled for next week.\n- Danny W.",
+            "timestamp": "2011-01-08T17:20:00.000+01:00"
+        },
+        {
+            "content": "SITE INSPECTION LOG\nProject: Springfield Mega Mall  \nInspector: Building Dept - Linda Kowalski\nDate: 01/10/2011\nFooters (from order two three four one two three) installed and cured properly. Grade elevation verified. Installation meets code requirements. Foundation work approved to proceed to next phase.\nStatus: ✓ APPROVED",
+            "timestamp": "2011-01-10T10:15:00.000+01:00"
+        },
+        {
+            "content": "Invoice #INV-234123-FINAL from Titan Precast Solutions\nBilled to: Springfield Development Corp\nAttn: Frank (Accounting)\nOrder: 234123 - 12x Precast Concrete Footers F-2400x800x600mm\nAmount: $18,450.00\nShipping (Polaris): $1,200.00\nRush fee: $500.00\nTotal: $20,150.00\nPayment terms: Net 30\nDelivered: 01/08/2011\nInstalled: 01/08/2011\nApproved by: Sarah Chen (Project Manager)",
+            "timestamp": "2011-01-10T16:30:00.000+01:00"
+        }
+    ]
+}
