@@ -1,0 +1,407 @@
+event_id,timestamp,ticket_id,activity,assigned_to,priority,category,department,notes
+1,2024-01-15 08:42:13,TKT-20240115-001,Ticket Created,Unassigned,Medium,Software,Finance,Excel crashing when opening large files
+2,2024-01-15 08:55:28,TKT-20240115-001,Ticket Assigned,Pat Anderson,Medium,Software,Finance,Assigned to L1 support
+3,2024-01-15 09:10:45,TKT-20240115-001,Work Started,Pat Anderson,Medium,Software,Finance,Checking Office version and updates
+4,2024-01-15 10:22:30,TKT-20240115-001,Ticket Resolved,Pat Anderson,Medium,Software,Finance,Increased memory allocation in Excel settings
+5,2024-01-15 10:35:12,TKT-20240115-001,Ticket Closed,Pat Anderson,Medium,Software,Finance,User confirmed issue resolved
+6,2024-01-15 09:15:33,TKT-20240115-002,Ticket Created,Unassigned,High,Network,Engineering,VPN connection failing for entire team
+7,2024-01-15 09:18:45,TKT-20240115-002,Ticket Assigned,Chris Johnson,High,Network,Engineering,Assigned to L1 support
+8,2024-01-15 09:35:20,TKT-20240115-002,Work Started,Chris Johnson,High,Network,Engineering,Testing VPN client connectivity
+9,2024-01-15 10:12:18,TKT-20240115-002,Escalated to L2,Taylor Chen,High,Network,Engineering,Network infrastructure issue - beyond L1 scope
+10,2024-01-15 10:25:40,TKT-20240115-002,Work Started,Taylor Chen,High,Network,Engineering,Checking VPN concentrator logs
+11,2024-01-15 11:45:22,TKT-20240115-002,Resolution Proposed,Taylor Chen,High,Network,Engineering,VPN concentrator at capacity - need to add second device
+12,2024-01-15 12:10:15,TKT-20240115-002,On Hold,Taylor Chen,High,Network,Engineering,Awaiting budget approval for hardware
+13,2024-01-16 14:32:08,TKT-20240115-002,Hold Released,Taylor Chen,High,Network,Engineering,Purchase approved
+14,2024-01-16 14:40:22,TKT-20240115-002,Awaiting Parts,Taylor Chen,High,Network,Engineering,VPN device ordered - 3 day delivery
+15,2024-01-18 10:15:30,TKT-20240115-002,Parts Received,Taylor Chen,High,Network,Engineering,Hardware arrived
+16,2024-01-18 13:20:45,TKT-20240115-002,Work Resumed,Taylor Chen,High,Network,Engineering,Installing and configuring new VPN concentrator
+17,2024-01-18 16:35:10,TKT-20240115-002,Ticket Resolved,Taylor Chen,High,Network,Engineering,Load balanced VPN across two devices
+18,2024-01-18 16:50:22,TKT-20240115-002,Ticket Closed,Taylor Chen,High,Network,Engineering,Team confirmed VPN working properly
+19,2024-01-15 11:22:40,TKT-20240115-003,Ticket Created,Unassigned,Low,Access,HR,New employee needs email account setup
+20,2024-01-15 11:45:15,TKT-20240115-003,Ticket Assigned,Sam Williams,Low,Access,HR,Assigned to L1 support
+21,2024-01-15 12:05:30,TKT-20240115-003,Work Started,Sam Williams,Low,Access,HR,Creating Active Directory account
+22,2024-01-15 12:35:45,TKT-20240115-003,Ticket Resolved,Sam Williams,Low,Access,HR,Email account created and credentials sent
+23,2024-01-15 12:40:20,TKT-20240115-003,Ticket Closed,Sam Williams,Low,Access,HR,User able to login successfully
+24,2024-01-16 02:15:33,TKT-20240116-001,Ticket Created,Unassigned,Critical,Software,Operations,Production database server unresponsive
+25,2024-01-16 02:18:22,TKT-20240116-001,Ticket Assigned,Jordan Lee,Critical,Software,Operations,L2 tech on-call assigned immediately
+26,2024-01-16 02:22:45,TKT-20240116-001,Work Started,Jordan Lee,Critical,Software,Operations,Checking database server status
+27,2024-01-16 02:55:10,TKT-20240116-001,Escalated to L3,Casey Brown,Critical,Software,Operations,Database corruption detected - need senior DBA
+28,2024-01-16 03:10:30,TKT-20240116-001,Work Started,Casey Brown,Critical,Software,Operations,Running database recovery procedures
+29,2024-01-16 05:45:20,TKT-20240116-001,Resolution Proposed,Casey Brown,Critical,Software,Operations,Database restored from backup with 2hr data loss
+30,2024-01-16 06:10:15,TKT-20240116-001,Ticket Resolved,Casey Brown,Critical,Software,Operations,Service restored - investigating root cause
+31,2024-01-16 06:20:33,TKT-20240116-001,Ticket Closed,Casey Brown,Critical,Software,Operations,Post-incident review scheduled
+32,2024-01-16 09:30:45,TKT-20240116-002,Ticket Created,Unassigned,Medium,Hardware,Sales,Laptop keyboard keys not working
+33,2024-01-16 09:50:20,TKT-20240116-002,Ticket Assigned,Chris Johnson,Medium,Hardware,Sales,Assigned to L1 support
+34,2024-01-16 10:15:35,TKT-20240116-002,Work Started,Chris Johnson,Medium,Hardware,Sales,Testing keyboard functionality
+35,2024-01-16 10:40:22,TKT-20240116-002,Awaiting Parts,Chris Johnson,Medium,Hardware,Sales,Replacement keyboard ordered
+36,2024-01-19 11:20:15,TKT-20240116-002,Parts Received,Chris Johnson,Medium,Hardware,Sales,Keyboard replacement arrived
+37,2024-01-19 14:30:40,TKT-20240116-002,Work Resumed,Chris Johnson,Medium,Hardware,Sales,Installing new keyboard
+38,2024-01-19 15:15:22,TKT-20240116-002,Ticket Resolved,Chris Johnson,Medium,Hardware,Sales,Keyboard replaced and tested
+39,2024-01-19 15:20:10,TKT-20240116-002,Ticket Closed,Chris Johnson,Medium,Hardware,Sales,User confirmed all keys working
+40,2024-01-16 13:22:18,TKT-20240116-003,Ticket Created,Unassigned,High,Security,Finance,Suspicious login attempts detected
+41,2024-01-16 13:25:40,TKT-20240116-003,Ticket Assigned,Morgan Davis,High,Security,Finance,Assigned to L2 security specialist
+42,2024-01-16 13:35:22,TKT-20240116-003,Work Started,Morgan Davis,High,Security,Finance,Reviewing security logs
+43,2024-01-16 14:15:45,TKT-20240116-003,Awaiting User Response,Morgan Davis,High,Security,Finance,Need to verify user travel history
+44,2024-01-16 16:30:20,TKT-20240116-003,User Responded,Morgan Davis,High,Security,Finance,User confirmed no international travel
+45,2024-01-16 16:45:35,TKT-20240116-003,Work Resumed,Morgan Davis,High,Security,Finance,Blocking suspicious IPs
+46,2024-01-16 17:10:22,TKT-20240116-003,Ticket Resolved,Morgan Davis,High,Security,Finance,Account secured and password reset
+47,2024-01-16 17:15:40,TKT-20240116-003,Ticket Closed,Morgan Davis,High,Security,Finance,Security measures implemented
+48,2024-01-17 10:15:33,TKT-20240117-001,Ticket Created,Unassigned,Medium,Performance,Engineering,Application running slowly
+49,2024-01-17 10:35:22,TKT-20240117-001,Ticket Assigned,Sam Williams,Medium,Performance,Engineering,Assigned to L1 support
+50,2024-01-17 10:50:45,TKT-20240117-001,Work Started,Sam Williams,Medium,Performance,Engineering,Checking CPU and memory usage
+51,2024-01-17 11:30:20,TKT-20240117-001,Escalated to L2,Alex Martinez,Medium,Performance,Engineering,Complex performance issue
+52,2024-01-17 12:05:15,TKT-20240117-001,Work Started,Alex Martinez,Medium,Performance,Engineering,Profiling application performance
+53,2024-01-17 14:22:40,TKT-20240117-001,Resolution Proposed,Alex Martinez,Medium,Performance,Engineering,Memory leak identified - application restart needed
+54,2024-01-17 14:45:30,TKT-20240117-001,Ticket Resolved,Alex Martinez,Medium,Performance,Engineering,Application restarted and monitoring added
+55,2024-01-17 14:50:15,TKT-20240117-001,Ticket Closed,Alex Martinez,Medium,Performance,Engineering,Performance back to normal
+56,2024-01-22 15:22:18,TKT-20240117-001,Ticket Reopened,Unassigned,High,Performance,Engineering,Issue returned - application slow again
+57,2024-01-22 15:30:45,TKT-20240117-001,Ticket Assigned,Alex Martinez,High,Performance,Engineering,Reassigned to same tech
+58,2024-01-22 15:45:20,TKT-20240117-001,Work Started,Alex Martinez,High,Performance,Engineering,Deeper investigation needed
+59,2024-01-22 16:30:35,TKT-20240117-001,Escalated to L3,Casey Brown,High,Performance,Engineering,Recurring issue - need architecture review
+60,2024-01-22 17:15:40,TKT-20240117-001,Work Started,Casey Brown,High,Performance,Engineering,Code review and architecture analysis
+61,2024-01-23 14:30:22,TKT-20240117-001,Resolution Proposed,Casey Brown,High,Performance,Engineering,Need to refactor database queries - development task created
+62,2024-01-23 14:45:15,TKT-20240117-001,Ticket Resolved,Casey Brown,High,Performance,Engineering,Temporary caching solution implemented
+63,2024-01-23 14:50:30,TKT-20240117-001,Ticket Closed,Casey Brown,High,Performance,Engineering,Performance stable - dev team working on permanent fix
+64,2024-01-18 08:45:20,TKT-20240118-001,Ticket Created,Unassigned,Low,Software,HR,Request to install Adobe Creative Suite
+65,2024-01-18 09:15:33,TKT-20240118-001,Ticket Assigned,Pat Anderson,Low,Software,HR,Assigned to L1 support
+66,2024-01-18 09:30:45,TKT-20240118-001,Work Started,Pat Anderson,Low,Software,HR,Checking license availability
+67,2024-01-18 10:05:22,TKT-20240118-001,On Hold,Pat Anderson,Low,Software,HR,No licenses available - awaiting procurement
+68,2024-01-25 13:20:40,TKT-20240118-001,Hold Released,Pat Anderson,Low,Software,HR,License purchased
+69,2024-01-25 13:45:15,TKT-20240118-001,Work Resumed,Pat Anderson,Low,Software,HR,Installing Creative Suite
+70,2024-01-25 15:30:20,TKT-20240118-001,Ticket Resolved,Pat Anderson,Low,Software,HR,Software installed and activated
+71,2024-01-25 15:35:45,TKT-20240118-001,Ticket Closed,Pat Anderson,Low,Software,HR,User training completed
+72,2024-01-18 11:22:35,TKT-20240118-002,Ticket Created,Unassigned,Medium,Network,Sales,WiFi dropping frequently in conference room
+73,2024-01-18 11:45:20,TKT-20240118-002,Ticket Assigned,Chris Johnson,Medium,Network,Sales,Assigned to L1 support
+74,2024-01-18 12:05:40,TKT-20240118-002,Work Started,Chris Johnson,Medium,Network,Sales,Testing wireless signal strength
+75,2024-01-18 13:15:22,TKT-20240118-002,Ticket Reassigned,Pat Anderson,Medium,Network,Sales,Chris overloaded with other tickets
+76,2024-01-18 13:35:45,TKT-20240118-002,Work Started,Pat Anderson,Medium,Network,Sales,Continuing wireless diagnostics
+77,2024-01-18 14:20:30,TKT-20240118-002,Escalated to L2,Taylor Chen,Medium,Network,Sales,Need network infrastructure expertise
+78,2024-01-18 14:50:15,TKT-20240118-002,Work Started,Taylor Chen,Medium,Network,Sales,Checking access point configuration
+79,2024-01-18 16:15:40,TKT-20240118-002,Resolution Proposed,Taylor Chen,Medium,Network,Sales,Channel interference - reconfiguring access point
+80,2024-01-18 16:45:22,TKT-20240118-002,Ticket Resolved,Taylor Chen,Medium,Network,Sales,Changed to less congested WiFi channel
+81,2024-01-18 16:50:35,TKT-20240118-002,Ticket Closed,Taylor Chen,Medium,Network,Sales,Connection stable for 30+ minutes
+82,2024-01-19 09:10:20,TKT-20240119-001,Ticket Created,Unassigned,High,Security,IT,Ransomware alert on workstation
+83,2024-01-19 09:12:45,TKT-20240119-001,Ticket Assigned,Morgan Davis,High,Security,IT,Assigned to L2 security specialist immediately
+84,2024-01-19 09:15:30,TKT-20240119-001,Work Started,Morgan Davis,High,Security,IT,Isolating affected workstation from network
+85,2024-01-19 09:25:40,TKT-20240119-001,Priority Changed,Morgan Davis,Critical,Security,IT,Multiple file encryptions detected - escalating priority
+86,2024-01-19 09:30:15,TKT-20240119-001,Escalated to L3,Casey Brown,Critical,Security,IT,Potential active breach
+87,2024-01-19 09:45:22,TKT-20240119-001,Work Started,Casey Brown,Critical,Security,IT,Full security incident response initiated
+88,2024-01-19 10:30:35,TKT-20240119-001,Escalated to Manager,IT Manager,Critical,Security,IT,Need to notify executive team
+89,2024-01-19 12:15:40,TKT-20240119-001,Work Resumed,Casey Brown,Critical,Security,IT,Forensic analysis and containment
+90,2024-01-19 16:45:20,TKT-20240119-001,Resolution Proposed,Casey Brown,Critical,Security,IT,Workstation reimaged - breach contained to single device
+91,2024-01-19 17:30:15,TKT-20240119-001,Ticket Resolved,Casey Brown,Critical,Security,IT,System restored and hardened
+92,2024-01-19 17:45:30,TKT-20240119-001,Ticket Closed,Casey Brown,Critical,Security,IT,Security audit scheduled
+93,2024-01-22 10:20:35,TKT-20240122-001,Ticket Created,Unassigned,Low,Hardware,Finance,Monitor flickering occasionally
+94,2024-01-22 10:50:22,TKT-20240122-001,Ticket Assigned,Sam Williams,Low,Hardware,Finance,Assigned to L1 support
+95,2024-01-22 11:15:40,TKT-20240122-001,Work Started,Sam Williams,Low,Hardware,Finance,Testing monitor and cables
+96,2024-01-22 11:45:20,TKT-20240122-001,Ticket Resolved,Sam Williams,Low,Hardware,Finance,Replaced loose display cable
+97,2024-01-22 11:50:15,TKT-20240122-001,Ticket Closed,Sam Williams,Low,Hardware,Finance,Monitor working properly
+98,2024-01-22 14:30:25,TKT-20240122-002,Ticket Created,Unassigned,Medium,Software,Engineering,Git repository sync errors
+99,2024-01-22 14:55:40,TKT-20240122-002,Ticket Assigned,Pat Anderson,Medium,Software,Engineering,Assigned to L1 support
+100,2024-01-22 15:20:15,TKT-20240122-002,Work Started,Pat Anderson,Medium,Software,Engineering,Checking Git configuration
+101,2024-01-22 16:05:30,TKT-20240122-002,Awaiting User Response,Pat Anderson,Medium,Software,Engineering,Need user SSH key details
+102,2024-01-23 09:15:22,TKT-20240122-002,User Responded,Pat Anderson,Medium,Software,Engineering,User provided SSH key info
+103,2024-01-23 09:30:45,TKT-20240122-002,Work Resumed,Pat Anderson,Medium,Software,Engineering,Reconfiguring Git authentication
+104,2024-01-23 10:15:20,TKT-20240122-002,Ticket Resolved,Pat Anderson,Medium,Software,Engineering,SSH keys regenerated and configured
+105,2024-01-23 10:20:35,TKT-20240122-002,Ticket Closed,Pat Anderson,Medium,Software,Engineering,User confirmed sync working
+106,2024-01-23 08:45:30,TKT-20240123-001,Ticket Created,Unassigned,Critical,Network,Operations,Internet connectivity down for entire office
+107,2024-01-23 08:47:15,TKT-20240123-001,Ticket Assigned,Taylor Chen,Critical,Network,Operations,L2 network specialist assigned immediately
+108,2024-01-23 08:50:40,TKT-20240123-001,Work Started,Taylor Chen,Critical,Network,Operations,Checking router and ISP connection
+109,2024-01-23 09:20:22,TKT-20240123-001,Escalated to L3,Riley Thompson,Critical,Network,Operations,ISP circuit issue - need vendor escalation
+110,2024-01-23 09:35:15,TKT-20240123-001,Work Started,Riley Thompson,Critical,Network,Operations,Contacting ISP support
+111,2024-01-23 11:45:30,TKT-20240123-001,Resolution Proposed,Riley Thompson,Critical,Network,Operations,ISP repairing fiber cut - ETA 2 hours
+112,2024-01-23 13:50:40,TKT-20240123-001,Ticket Resolved,Riley Thompson,Critical,Network,Operations,Internet service restored
+113,2024-01-23 14:00:20,TKT-20240123-001,Ticket Closed,Riley Thompson,Critical,Network,Operations,All systems confirmed online
+114,2024-01-24 11:20:45,TKT-20240124-001,Ticket Created,Unassigned,Medium,Access,HR,Employee transferred departments - update permissions
+115,2024-01-24 11:45:30,TKT-20240124-001,Ticket Assigned,Morgan Davis,Medium,Access,HR,Assigned to L2 for access management
+116,2024-01-24 12:05:15,TKT-20240124-001,Work Started,Morgan Davis,Medium,Access,HR,Reviewing current and required permissions
+117,2024-01-24 13:20:40,TKT-20240124-001,Awaiting User Response,Morgan Davis,Medium,Access,HR,Need manager approval for elevated access
+118,2024-01-29 14:35:22,TKT-20240124-001,User Responded,Morgan Davis,Medium,Access,HR,Manager approved access changes
+119,2024-01-29 14:50:35,TKT-20240124-001,Work Resumed,Morgan Davis,Medium,Access,HR,Updating Active Directory groups
+120,2024-01-29 15:30:20,TKT-20240124-001,Ticket Resolved,Morgan Davis,Medium,Access,HR,Permissions updated successfully
+121,2024-01-29 15:35:45,TKT-20240124-001,Ticket Closed,Morgan Davis,Medium,Access,HR,User confirmed access to new systems
+122,2024-01-25 09:15:40,TKT-20240125-001,Ticket Created,Unassigned,Low,Software,Sales,Outlook calendar sync issues
+123,2024-01-25 09:40:20,TKT-20240125-001,Ticket Assigned,Chris Johnson,Low,Software,Sales,Assigned to L1 support
+124,2024-01-25 10:05:35,TKT-20240125-001,Work Started,Chris Johnson,Low,Software,Sales,Checking Exchange sync status
+125,2024-01-25 10:45:22,TKT-20240125-001,Ticket Resolved,Chris Johnson,Low,Software,Sales,Cleared Outlook cache and resynced
+126,2024-01-25 10:50:15,TKT-20240125-001,Ticket Closed,Chris Johnson,Low,Software,Sales,Calendar syncing properly
+127,2024-01-25 13:22:30,TKT-20240125-002,Ticket Created,Unassigned,High,Hardware,Engineering,Workstation won't boot after power outage
+128,2024-01-25 13:35:45,TKT-20240125-002,Ticket Assigned,Sam Williams,High,Hardware,Engineering,Assigned to L1 support
+129,2024-01-25 13:50:20,TKT-20240125-002,Work Started,Sam Williams,High,Hardware,Engineering,Diagnosing boot failure
+130,2024-01-25 14:30:40,TKT-20240125-002,Escalated to L2,Alex Martinez,High,Hardware,Engineering,Possible hardware damage
+131,2024-01-25 14:50:15,TKT-20240125-002,Work Started,Alex Martinez,High,Hardware,Engineering,Testing power supply and motherboard
+132,2024-01-25 15:45:30,TKT-20240125-002,Awaiting Parts,Alex Martinez,High,Hardware,Engineering,Power supply failed - replacement ordered
+133,2024-01-26 10:20:22,TKT-20240125-002,Parts Received,Alex Martinez,High,Hardware,Engineering,New power supply arrived
+134,2024-01-26 11:15:40,TKT-20240125-002,Work Resumed,Alex Martinez,High,Hardware,Engineering,Installing new power supply
+135,2024-01-26 12:30:15,TKT-20240125-002,Ticket Resolved,Alex Martinez,High,Hardware,Engineering,Workstation booting normally
+136,2024-01-26 12:35:35,TKT-20240125-002,Ticket Closed,Alex Martinez,High,Hardware,Engineering,All applications working
+137,2024-01-26 15:10:20,TKT-20240126-001,Ticket Created,Unassigned,Medium,Performance,Finance,Database queries running slowly
+138,2024-01-26 15:30:45,TKT-20240126-001,Ticket Assigned,Chris Johnson,Medium,Performance,Finance,Assigned to L1 support
+139,2024-01-26 15:50:30,TKT-20240126-001,Work Started,Chris Johnson,Medium,Performance,Finance,Checking database server resources
+140,2024-01-26 16:20:15,TKT-20240126-001,Escalated to L2,Jordan Lee,Medium,Performance,Finance,Database optimization needed
+141,2024-01-26 16:45:40,TKT-20240126-001,Work Started,Jordan Lee,Medium,Performance,Finance,Analyzing query performance
+142,2024-01-29 10:15:22,TKT-20240126-001,Resolution Proposed,Jordan Lee,Medium,Performance,Finance,Missing indexes identified - creating optimization plan
+143,2024-01-29 11:30:35,TKT-20240126-001,Ticket Resolved,Jordan Lee,Medium,Performance,Finance,Indexes added - 60% performance improvement
+144,2024-01-29 11:35:50,TKT-20240126-001,Ticket Closed,Jordan Lee,Medium,Performance,Finance,User confirmed acceptable query speed
+145,2024-01-29 09:45:15,TKT-20240129-001,Ticket Created,Unassigned,Low,Access,Sales,Password reset request
+146,2024-01-29 10:05:30,TKT-20240129-001,Ticket Assigned,Pat Anderson,Low,Access,Sales,Assigned to L1 support
+147,2024-01-29 10:20:45,TKT-20240129-001,Work Started,Pat Anderson,Low,Access,Sales,Verifying user identity
+148,2024-01-29 10:35:20,TKT-20240129-001,Ticket Resolved,Pat Anderson,Low,Access,Sales,Password reset and temporary credentials sent
+149,2024-01-29 10:40:15,TKT-20240129-001,Ticket Closed,Pat Anderson,Low,Access,Sales,User logged in successfully
+150,2024-01-30 08:30:40,TKT-20240130-001,Ticket Created,Unassigned,Critical,Security,Finance,CEO account compromised - suspicious emails sent
+151,2024-01-30 08:32:15,TKT-20240130-001,Ticket Assigned,Morgan Davis,Critical,Security,Finance,L2 security specialist assigned immediately
+152,2024-01-30 08:35:30,TKT-20240130-001,Work Started,Morgan Davis,Critical,Security,Finance,Disabling compromised account
+153,2024-01-30 08:45:22,TKT-20240130-001,Escalated to Manager,IT Manager,Critical,Security,Finance,Executive account - manager notification required
+154,2024-01-30 09:05:40,TKT-20240130-001,Work Resumed,Morgan Davis,Critical,Security,Finance,Analyzing email logs and access patterns
+155,2024-01-30 09:30:15,TKT-20240130-001,Escalated to L3,Casey Brown,Critical,Security,Finance,Company-wide security implications
+156,2024-01-30 10:15:35,TKT-20240130-001,Work Started,Casey Brown,Critical,Security,Finance,Full security audit of executive accounts
+157,2024-01-30 14:20:50,TKT-20240130-001,Resolution Proposed,Casey Brown,Critical,Security,Finance,MFA implementation required for all exec accounts
+158,2024-01-30 16:45:20,TKT-20240130-001,Ticket Resolved,Casey Brown,Critical,Security,Finance,Account secured with MFA and new credentials
+159,2024-01-30 17:00:30,TKT-20240130-001,Ticket Closed,Casey Brown,Critical,Security,Finance,Security training scheduled for executives
+160,2024-01-31 10:22:35,TKT-20240131-001,Ticket Created,Unassigned,Medium,Software,HR,Printer driver not installing
+161,2024-01-31 10:45:20,TKT-20240131-001,Ticket Assigned,Sam Williams,Medium,Software,HR,Assigned to L1 support
+162,2024-01-31 11:05:40,TKT-20240131-001,Work Started,Sam Williams,Medium,Software,HR,Attempting driver installation
+163,2024-01-31 11:50:15,TKT-20240131-001,Ticket Resolved,Sam Williams,Medium,Software,HR,Removed old driver and installed updated version
+164,2024-01-31 11:55:30,TKT-20240131-001,Ticket Closed,Sam Williams,Medium,Software,HR,Printer working correctly
+165,2024-02-01 14:15:45,TKT-20240201-001,Ticket Created,Unassigned,High,Network,IT,Server room temperature alarm triggered
+166,2024-02-01 14:20:30,TKT-20240201-001,Ticket Assigned,Taylor Chen,High,Network,IT,L2 infrastructure specialist assigned
+167,2024-02-01 14:25:15,TKT-20240201-001,Work Started,Taylor Chen,High,Network,IT,Checking HVAC system
+168,2024-02-01 14:50:40,TKT-20240201-001,Escalated to L3,Riley Thompson,High,Network,IT,HVAC failure - need facilities coordination
+169,2024-02-01 15:10:22,TKT-20240201-001,Work Started,Riley Thompson,High,Network,IT,Coordinating emergency HVAC repair
+170,2024-02-01 17:30:35,TKT-20240201-001,Resolution Proposed,Riley Thompson,High,Network,IT,Temporary cooling units deployed
+171,2024-02-01 18:15:20,TKT-20240201-001,Ticket Resolved,Riley Thompson,High,Network,IT,Server room temperature stabilized
+172,2024-02-01 18:30:45,TKT-20240201-001,Ticket Closed,Riley Thompson,High,Network,IT,Permanent HVAC repair scheduled
+173,2024-02-02 09:40:25,TKT-20240202-001,Ticket Created,Unassigned,Low,Software,Engineering,Request to upgrade Python version
+174,2024-02-02 10:05:40,TKT-20240202-001,Ticket Assigned,Pat Anderson,Low,Software,Engineering,Assigned to L1 support
+175,2024-02-02 10:25:15,TKT-20240202-001,Work Started,Pat Anderson,Low,Software,Engineering,Checking compatibility with existing projects
+176,2024-02-02 11:30:35,TKT-20240202-001,Ticket Reassigned,Alex Martinez,Low,Software,Engineering,Development environment changes need L2 review
+177,2024-02-02 12:15:50,TKT-20240202-001,Work Started,Alex Martinez,Low,Software,Engineering,Testing Python upgrade on dev environment
+178,2024-02-02 14:45:20,TKT-20240202-001,Ticket Resolved,Alex Martinez,Low,Software,Engineering,Python upgraded and all dependencies verified
+179,2024-02-02 14:50:40,TKT-20240202-001,Ticket Closed,Alex Martinez,Low,Software,Engineering,Developer confirmed environment working
+180,2024-02-05 11:20:30,TKT-20240205-001,Ticket Created,Unassigned,Medium,Hardware,Sales,External monitor not detected
+181,2024-02-05 11:40:45,TKT-20240205-001,Ticket Assigned,Chris Johnson,Medium,Hardware,Sales,Assigned to L1 support
+182,2024-02-05 12:05:20,TKT-20240205-001,Work Started,Chris Johnson,Medium,Hardware,Sales,Testing display connections
+183,2024-02-05 12:35:15,TKT-20240205-001,Ticket Resolved,Chris Johnson,Medium,Hardware,Sales,Updated graphics drivers
+184,2024-02-05 12:40:30,TKT-20240205-001,Ticket Closed,Chris Johnson,Medium,Hardware,Sales,Monitor detected and working
+185,2024-02-07 16:20:35,TKT-20240205-001,Ticket Reopened,Unassigned,High,Hardware,Sales,Monitor stopped working again
+186,2024-02-07 16:35:50,TKT-20240205-001,Ticket Assigned,Chris Johnson,High,Hardware,Sales,Reassigned to original tech
+187,2024-02-07 16:50:15,TKT-20240205-001,Work Started,Chris Johnson,High,Hardware,Sales,Further diagnostics needed
+188,2024-02-07 17:20:40,TKT-20240205-001,Escalated to L2,Alex Martinez,High,Hardware,Sales,Recurring issue - deeper investigation required
+189,2024-02-08 09:15:22,TKT-20240205-001,Work Started,Alex Martinez,High,Hardware,Sales,Testing hardware compatibility
+190,2024-02-08 10:30:45,TKT-20240205-001,Awaiting Parts,Alex Martinez,High,Hardware,Sales,Faulty display cable - replacement needed
+191,2024-02-09 11:20:30,TKT-20240205-001,Parts Received,Alex Martinez,High,Hardware,Sales,DisplayPort cable arrived
+192,2024-02-09 11:45:15,TKT-20240205-001,Work Resumed,Alex Martinez,High,Hardware,Sales,Installing new cable
+193,2024-02-09 12:15:40,TKT-20240205-001,Ticket Resolved,Alex Martinez,High,Hardware,Sales,Monitor stable with new cable
+194,2024-02-09 12:20:35,TKT-20240205-001,Ticket Closed,Alex Martinez,High,Hardware,Sales,Tested for 24 hours - no issues
+195,2024-02-06 13:30:20,TKT-20240206-001,Ticket Created,Unassigned,Medium,Access,Operations,New contractor needs temporary system access
+196,2024-02-06 14:00:35,TKT-20240206-001,Ticket Assigned,Morgan Davis,Medium,Access,Operations,Assigned to L2 for access management
+197,2024-02-06 14:20:50,TKT-20240206-001,Work Started,Morgan Davis,Medium,Access,Operations,Creating temporary account
+198,2024-02-06 14:50:15,TKT-20240206-001,Awaiting User Response,Morgan Davis,Medium,Access,Operations,Need HR approval for contractor access
+199,2024-02-12 10:15:30,TKT-20240206-001,User Responded,Morgan Davis,Medium,Access,Operations,HR approved with 30-day expiration
+200,2024-02-12 10:35:45,TKT-20240206-001,Work Resumed,Morgan Davis,Medium,Access,Operations,Configuring time-limited account
+201,2024-02-12 11:20:20,TKT-20240206-001,Ticket Resolved,Morgan Davis,Medium,Access,Operations,Contractor account created with auto-expiration
+202,2024-02-12 11:25:40,TKT-20240206-001,Ticket Closed,Morgan Davis,Medium,Access,Operations,Credentials delivered to contractor
+203,2024-02-07 08:50:25,TKT-20240207-001,Ticket Created,Unassigned,Low,Software,Finance,Excel macro not working after update
+204,2024-02-07 09:20:40,TKT-20240207-001,Ticket Assigned,Pat Anderson,Low,Software,Finance,Assigned to L1 support
+205,2024-02-07 09:45:15,TKT-20240207-001,Work Started,Pat Anderson,Low,Software,Finance,Testing macro functionality
+206,2024-02-07 10:30:35,TKT-20240207-001,Ticket Resolved,Pat Anderson,Low,Software,Finance,Enabled macros in Trust Center settings
+207,2024-02-07 10:35:50,TKT-20240207-001,Ticket Closed,Pat Anderson,Low,Software,Finance,Macro running successfully
+208,2024-02-08 15:15:30,TKT-20240208-001,Ticket Created,Unassigned,High,Performance,Engineering,Build server running out of disk space
+209,2024-02-08 15:25:45,TKT-20240208-001,Ticket Assigned,Sam Williams,High,Performance,Engineering,Assigned to L1 support
+210,2024-02-08 15:40:20,TKT-20240208-001,Work Started,Sam Williams,High,Performance,Engineering,Checking disk usage
+211,2024-02-08 16:10:35,TKT-20240208-001,Escalated to L2,Alex Martinez,High,Performance,Engineering,Build artifacts cleanup needs careful review
+212,2024-02-08 16:35:50,TKT-20240208-001,Work Started,Alex Martinez,High,Performance,Engineering,Analyzing build artifact retention
+213,2024-02-08 17:45:15,TKT-20240208-001,Resolution Proposed,Alex Martinez,High,Performance,Engineering,Automated cleanup script for old builds
+214,2024-02-08 18:20:40,TKT-20240208-001,Ticket Resolved,Alex Martinez,High,Performance,Engineering,Freed 200GB - automation configured
+215,2024-02-08 18:25:30,TKT-20240208-001,Ticket Closed,Alex Martinez,High,Performance,Engineering,Monitoring added for future prevention
+216,2024-02-09 10:30:45,TKT-20240209-001,Ticket Created,Unassigned,Critical,Software,Operations,Payment processing system offline
+217,2024-02-09 10:32:20,TKT-20240209-001,Ticket Assigned,Jordan Lee,Critical,Software,Operations,L2 database specialist assigned immediately
+218,2024-02-09 10:35:15,TKT-20240209-001,Work Started,Jordan Lee,Critical,Software,Operations,Investigating service status
+219,2024-02-09 10:50:40,TKT-20240209-001,Escalated to L3,Casey Brown,Critical,Software,Operations,Critical business system - need senior oversight
+220,2024-02-09 11:05:35,TKT-20240209-001,Work Started,Casey Brown,Critical,Software,Operations,Database deadlock detected
+221,2024-02-09 11:45:20,TKT-20240209-001,Resolution Proposed,Casey Brown,Critical,Software,Operations,Restarting database with optimized settings
+222,2024-02-09 12:15:50,TKT-20240209-001,Ticket Resolved,Casey Brown,Critical,Software,Operations,Payment system restored
+223,2024-02-09 12:30:15,TKT-20240209-001,Ticket Closed,Casey Brown,Critical,Software,Operations,Verified transaction processing
+224,2024-02-12 09:20:35,TKT-20240212-001,Ticket Created,Unassigned,Medium,Network,HR,Unable to connect to shared drive
+225,2024-02-12 09:45:50,TKT-20240212-001,Ticket Assigned,Chris Johnson,Medium,Network,HR,Assigned to L1 support
+226,2024-02-12 10:10:15,TKT-20240212-001,Work Started,Chris Johnson,Medium,Network,HR,Testing network connectivity
+227,2024-02-12 10:35:40,TKT-20240212-001,Ticket Reassigned,Taylor Chen,Medium,Network,HR,Network path issue needs L2
+228,2024-02-12 11:05:20,TKT-20240212-001,Work Started,Taylor Chen,Medium,Network,HR,Checking file server and permissions
+229,2024-02-12 11:50:35,TKT-20240212-001,Ticket Resolved,Taylor Chen,Medium,Network,HR,Remapped network drive with correct path
+230,2024-02-12 11:55:45,TKT-20240212-001,Ticket Closed,Taylor Chen,Medium,Network,HR,User can access shared files
+231,2024-02-13 14:40:20,TKT-20240213-001,Ticket Created,Unassigned,Low,Hardware,Engineering,Mouse scroll wheel not working
+232,2024-02-13 15:05:35,TKT-20240213-001,Ticket Assigned,Sam Williams,Low,Hardware,Engineering,Assigned to L1 support
+233,2024-02-13 15:20:50,TKT-20240213-001,Work Started,Sam Williams,Low,Hardware,Engineering,Testing mouse functionality
+234,2024-02-13 15:40:15,TKT-20240213-001,Ticket Resolved,Sam Williams,Low,Hardware,Engineering,Replaced with spare mouse from inventory
+235,2024-02-13 15:45:30,TKT-20240213-001,Ticket Closed,Sam Williams,Low,Hardware,Engineering,New mouse working properly
+236,2024-02-14 11:15:40,TKT-20240214-001,Ticket Created,Unassigned,High,Security,Sales,Phishing email reported by multiple users
+237,2024-02-14 11:20:25,TKT-20240214-001,Ticket Assigned,Morgan Davis,High,Security,Sales,L2 security specialist assigned
+238,2024-02-14 11:30:50,TKT-20240214-001,Work Started,Morgan Davis,High,Security,Sales,Analyzing email headers and content
+239,2024-02-14 12:15:35,TKT-20240214-001,Resolution Proposed,Morgan Davis,High,Security,Sales,Blocking sender domain in email gateway
+240,2024-02-14 12:45:20,TKT-20240214-001,Ticket Resolved,Morgan Davis,High,Security,Sales,Email filter rules updated
+241,2024-02-14 12:50:40,TKT-20240214-001,Ticket Closed,Morgan Davis,High,Security,Sales,Security awareness reminder sent
+242,2024-02-15 09:35:15,TKT-20240215-001,Ticket Created,Unassigned,Medium,Software,IT,Backup job failing nightly
+243,2024-02-15 10:00:30,TKT-20240215-001,Ticket Assigned,Pat Anderson,Medium,Software,IT,Assigned to L1 support
+244,2024-02-15 10:25:45,TKT-20240215-001,Work Started,Pat Anderson,Medium,Software,IT,Reviewing backup logs
+245,2024-02-15 11:15:20,TKT-20240215-001,Escalated to L2,Alex Martinez,Medium,Software,IT,Backup infrastructure issue
+246,2024-02-15 11:40:35,TKT-20240215-001,Work Started,Alex Martinez,Medium,Software,IT,Diagnosing backup failure
+247,2024-02-15 13:30:50,TKT-20240215-001,Resolution Proposed,Alex Martinez,Medium,Software,IT,Backup target disk full - need to expand storage
+248,2024-02-15 14:15:15,TKT-20240215-001,On Hold,Alex Martinez,Medium,Software,IT,Awaiting storage procurement approval
+249,2024-02-19 10:20:40,TKT-20240215-001,Hold Released,Alex Martinez,Medium,Software,IT,Storage expansion approved
+250,2024-02-19 10:45:25,TKT-20240215-001,Awaiting Parts,Alex Martinez,Medium,Software,IT,Additional drives ordered
+251,2024-02-21 13:30:35,TKT-20240215-001,Parts Received,Alex Martinez,Medium,Software,IT,Storage drives arrived
+252,2024-02-21 14:15:50,TKT-20240215-001,Work Resumed,Alex Martinez,Medium,Software,IT,Installing additional storage
+253,2024-02-21 16:45:20,TKT-20240215-001,Ticket Resolved,Alex Martinez,Medium,Software,IT,Backup storage expanded and job successful
+254,2024-02-21 16:50:40,TKT-20240215-001,Ticket Closed,Alex Martinez,Medium,Software,IT,Backup monitoring configured
+255,2024-02-16 08:20:30,TKT-20240216-001,Ticket Created,Unassigned,Low,Access,Finance,Forgot password for expense system
+256,2024-02-16 08:45:45,TKT-20240216-001,Ticket Assigned,Pat Anderson,Low,Access,Finance,Assigned to L1 support
+257,2024-02-16 09:05:20,TKT-20240216-001,Work Started,Pat Anderson,Low,Access,Finance,Verifying user identity
+258,2024-02-16 09:20:35,TKT-20240216-001,Ticket Resolved,Pat Anderson,Low,Access,Finance,Password reset completed
+259,2024-02-16 09:25:50,TKT-20240216-001,Ticket Closed,Pat Anderson,Low,Access,Finance,User logged in successfully
+260,2024-02-19 13:40:25,TKT-20240219-001,Ticket Created,Unassigned,Medium,Performance,Sales,CRM system loading very slowly
+261,2024-02-19 14:05:40,TKT-20240219-001,Ticket Assigned,Chris Johnson,Medium,Performance,Sales,Assigned to L1 support
+262,2024-02-19 14:30:15,TKT-20240219-001,Work Started,Chris Johnson,Medium,Performance,Sales,Checking browser and network
+263,2024-02-19 15:10:35,TKT-20240219-001,Escalated to L2,Alex Martinez,Medium,Performance,Sales,Application performance issue
+264,2024-02-19 15:35:50,TKT-20240219-001,Work Started,Alex Martinez,Medium,Performance,Sales,Analyzing CRM server performance
+265,2024-02-19 16:45:20,TKT-20240219-001,Ticket Reassigned,Jordan Lee,Medium,Performance,Sales,Database performance - need DB specialist
+266,2024-02-20 09:15:40,TKT-20240219-001,Work Started,Jordan Lee,Medium,Performance,Sales,Database query optimization
+267,2024-02-20 11:30:25,TKT-20240219-001,Resolution Proposed,Jordan Lee,Medium,Performance,Sales,Rebuilt indexes and updated statistics
+268,2024-02-20 12:15:35,TKT-20240219-001,Ticket Resolved,Jordan Lee,Medium,Performance,Sales,CRM performance improved significantly
+269,2024-02-20 12:20:50,TKT-20240219-001,Ticket Closed,Jordan Lee,Medium,Performance,Sales,User confirmed acceptable load times
+270,2024-02-20 10:25:15,TKT-20240220-001,Ticket Created,Unassigned,Critical,Hardware,IT,Server hard drive failure alarm
+271,2024-02-20 10:27:40,TKT-20240220-001,Ticket Assigned,Alex Martinez,Critical,Hardware,IT,L2 hardware specialist assigned immediately
+272,2024-02-20 10:30:35,TKT-20240220-001,Work Started,Alex Martinez,Critical,Hardware,IT,Checking RAID array status
+273,2024-02-20 10:50:20,TKT-20240220-001,Priority Changed,Alex Martinez,High,Hardware,IT,RAID rebuild in progress - not critical yet
+274,2024-02-20 11:15:45,TKT-20240220-001,Awaiting Parts,Alex Martinez,High,Hardware,IT,Replacement drive ordered for degraded RAID
+275,2024-02-22 14:30:30,TKT-20240220-001,Parts Received,Alex Martinez,High,Hardware,IT,Replacement drive delivered
+276,2024-02-22 15:05:50,TKT-20240220-001,Work Resumed,Alex Martinez,High,Hardware,IT,Hot-swapping failed drive
+277,2024-02-22 16:20:15,TKT-20240220-001,Ticket Resolved,Alex Martinez,High,Hardware,IT,RAID array rebuilt successfully
+278,2024-02-22 16:25:40,TKT-20240220-001,Ticket Closed,Alex Martinez,High,Hardware,IT,Server performance normal
+279,2024-02-21 09:15:35,TKT-20240221-001,Ticket Created,Unassigned,Low,Software,HR,Teams notification sound not working
+280,2024-02-21 09:40:50,TKT-20240221-001,Ticket Assigned,Sam Williams,Low,Software,HR,Assigned to L1 support
+281,2024-02-21 10:05:15,TKT-20240221-001,Work Started,Sam Williams,Low,Software,HR,Checking Teams audio settings
+282,2024-02-21 10:30:40,TKT-20240221-001,Ticket Resolved,Sam Williams,Low,Software,HR,Re-enabled notifications in Teams settings
+283,2024-02-21 10:35:25,TKT-20240221-001,Ticket Closed,Sam Williams,Low,Software,HR,Notifications working correctly
+284,2024-02-22 11:20:45,TKT-20240222-001,Ticket Created,Unassigned,Medium,Network,Operations,Cannot access internal wiki
+285,2024-02-22 11:45:30,TKT-20240222-001,Ticket Assigned,Chris Johnson,Medium,Network,Operations,Assigned to L1 support
+286,2024-02-22 12:10:15,TKT-20240222-001,Work Started,Chris Johnson,Medium,Network,Operations,Testing wiki accessibility
+287,2024-02-22 12:50:35,TKT-20240222-001,Escalated to L2,Taylor Chen,Medium,Network,Operations,DNS or network routing issue
+288,2024-02-22 13:15:50,TKT-20240222-001,Work Started,Taylor Chen,Medium,Network,Operations,Checking DNS records
+289,2024-02-22 14:30:20,TKT-20240222-001,Resolution Proposed,Taylor Chen,Medium,Network,Operations,Stale DNS cache - flushing and updating
+290,2024-02-22 14:50:40,TKT-20240222-001,Ticket Resolved,Taylor Chen,Medium,Network,Operations,Wiki accessible after DNS update
+291,2024-02-22 14:55:25,TKT-20240222-001,Ticket Closed,Taylor Chen,Medium,Network,Operations,Multiple users confirmed access
+292,2024-02-23 15:30:35,TKT-20240223-001,Ticket Created,Unassigned,High,Software,Engineering,Development environment build broken
+293,2024-02-23 15:50:50,TKT-20240223-001,Ticket Assigned,Pat Anderson,High,Software,Engineering,Assigned to L1 support
+294,2024-02-23 16:15:20,TKT-20240223-001,Work Started,Pat Anderson,High,Software,Engineering,Reviewing build errors
+295,2024-02-23 16:45:40,TKT-20240223-001,Escalated to L2,Alex Martinez,High,Software,Engineering,Complex build configuration issue
+296,2024-02-23 17:10:15,TKT-20240223-001,Work Started,Alex Martinez,High,Software,Engineering,Analyzing dependency conflicts
+297,2024-02-26 09:30:35,TKT-20240223-001,Resolution Proposed,Alex Martinez,High,Software,Engineering,Updated build configuration and dependencies
+298,2024-02-26 10:15:50,TKT-20240223-001,Ticket Resolved,Alex Martinez,High,Software,Engineering,Build pipeline restored
+299,2024-02-26 10:20:25,TKT-20240223-001,Ticket Closed,Alex Martinez,High,Software,Engineering,Team confirmed successful builds
+300,2024-02-26 13:45:40,TKT-20240226-001,Ticket Created,Unassigned,Low,Hardware,Sales,Headset microphone not working
+301,2024-02-26 14:10:25,TKT-20240226-001,Ticket Assigned,Chris Johnson,Low,Hardware,Sales,Assigned to L1 support
+302,2024-02-26 14:30:50,TKT-20240226-001,Work Started,Chris Johnson,Low,Hardware,Sales,Testing audio devices
+303,2024-02-26 14:50:15,TKT-20240226-001,Ticket Resolved,Chris Johnson,Low,Hardware,Sales,Updated audio drivers and set correct input device
+304,2024-02-26 14:55:35,TKT-20240226-001,Ticket Closed,Chris Johnson,Low,Hardware,Sales,Microphone working in Teams
+305,2024-02-27 10:20:30,TKT-20240227-001,Ticket Created,Unassigned,Medium,Access,Engineering,Need elevated permissions for deployment
+306,2024-02-27 10:45:45,TKT-20240227-001,Ticket Assigned,Morgan Davis,Medium,Access,Engineering,Assigned to L2 for access management
+307,2024-02-27 11:10:20,TKT-20240227-001,Work Started,Morgan Davis,Medium,Access,Engineering,Reviewing permission request
+308,2024-02-27 11:40:35,TKT-20240227-001,Awaiting User Response,Morgan Davis,Medium,Access,Engineering,Need manager approval for production access
+309,2024-02-27 14:25:50,TKT-20240227-001,User Responded,Morgan Davis,Medium,Access,Engineering,Manager approved via email
+310,2024-02-27 14:45:15,TKT-20240227-001,Work Resumed,Morgan Davis,Medium,Access,Engineering,Granting deployment permissions
+311,2024-02-27 15:20:40,TKT-20240227-001,Ticket Resolved,Morgan Davis,Medium,Access,Engineering,Permissions granted with audit logging
+312,2024-02-27 15:25:30,TKT-20240227-001,Ticket Closed,Morgan Davis,Medium,Access,Engineering,User confirmed successful deployment
+313,2024-02-28 09:35:25,TKT-20240228-001,Ticket Created,Unassigned,Low,Software,Finance,PowerPoint presentation won't open
+314,2024-02-28 10:00:40,TKT-20240228-001,Ticket Assigned,Sam Williams,Low,Software,Finance,Assigned to L1 support
+315,2024-02-28 10:25:15,TKT-20240228-001,Work Started,Sam Williams,Low,Software,Finance,Attempting to open file
+316,2024-02-28 10:50:35,TKT-20240228-001,Ticket Resolved,Sam Williams,Low,Software,Finance,File corrupted - recovered from auto-save
+317,2024-02-28 10:55:50,TKT-20240228-001,Ticket Closed,Sam Williams,Low,Software,Finance,User able to open recovered file
+318,2024-02-29 11:40:20,TKT-20240229-001,Ticket Created,Unassigned,Medium,Performance,HR,Payroll system processing very slow
+319,2024-02-29 12:05:35,TKT-20240229-001,Ticket Assigned,Chris Johnson,Medium,Performance,HR,Assigned to L1 support
+320,2024-02-29 12:30:50,TKT-20240229-001,Work Started,Chris Johnson,Medium,Performance,HR,Checking system resources
+321,2024-02-29 13:15:15,TKT-20240229-001,Escalated to L2,Jordan Lee,Medium,Performance,HR,Database performance issue
+322,2024-02-29 13:40:30,TKT-20240229-001,Work Started,Jordan Lee,Medium,Performance,HR,Analyzing payroll database
+323,2024-02-29 15:20:45,TKT-20240229-001,Resolution Proposed,Jordan Lee,Medium,Performance,HR,Large transaction log - need to truncate
+324,2024-02-29 16:05:25,TKT-20240229-001,Ticket Resolved,Jordan Lee,Medium,Performance,HR,Log truncated and database optimized
+325,2024-02-29 16:10:40,TKT-20240229-001,Ticket Closed,Jordan Lee,Medium,Performance,HR,Payroll processing speed normal
+326,2024-03-01 08:50:35,TKT-20240301-001,Ticket Created,Unassigned,Critical,Network,Finance,Cannot connect to banking API
+327,2024-03-01 08:52:20,TKT-20240301-001,Ticket Assigned,Taylor Chen,Critical,Network,Finance,L2 network specialist assigned immediately
+328,2024-03-01 08:55:15,TKT-20240301-001,Work Started,Taylor Chen,Critical,Network,Finance,Testing external connectivity
+329,2024-03-01 09:20:40,TKT-20240301-001,Escalated to L3,Riley Thompson,Critical,Network,Finance,External vendor API issue
+330,2024-03-01 09:35:50,TKT-20240301-001,Work Started,Riley Thompson,Critical,Network,Finance,Contacting bank technical support
+331,2024-03-01 11:15:25,TKT-20240301-001,Resolution Proposed,Riley Thompson,Critical,Network,Finance,Bank firewall rule change - updating our config
+332,2024-03-01 11:45:35,TKT-20240301-001,Ticket Resolved,Riley Thompson,Critical,Network,Finance,API connectivity restored
+333,2024-03-01 11:50:50,TKT-20240301-001,Ticket Closed,Riley Thompson,Critical,Network,Finance,Transaction processing verified
+334,2024-03-04 14:25:40,TKT-20240304-001,Ticket Created,Unassigned,Low,Software,Operations,Request to install new monitoring tool
+335,2024-03-04 14:50:25,TKT-20240304-001,Ticket Assigned,Pat Anderson,Low,Software,Operations,Assigned to L1 support
+336,2024-03-04 15:15:35,TKT-20240304-001,Work Started,Pat Anderson,Low,Software,Operations,Researching tool requirements
+337,2024-03-04 15:45:50,TKT-20240304-001,Escalated to L2,Alex Martinez,Low,Software,Operations,Infrastructure tool needs L2 review
+338,2024-03-04 16:10:20,TKT-20240304-001,Work Started,Alex Martinez,Low,Software,Operations,Installing and configuring monitoring agent
+339,2024-03-04 17:30:40,TKT-20240304-001,Ticket Resolved,Alex Martinez,Low,Software,Operations,Monitoring tool installed and collecting metrics
+340,2024-03-04 17:35:15,TKT-20240304-001,Ticket Closed,Alex Martinez,Low,Software,Operations,Team confirmed dashboard access
+341,2024-03-05 10:40:30,TKT-20240305-001,Ticket Created,Unassigned,Medium,Hardware,Engineering,Workstation making loud fan noise
+342,2024-03-05 11:05:45,TKT-20240305-001,Ticket Assigned,Sam Williams,Medium,Hardware,Engineering,Assigned to L1 support
+343,2024-03-05 11:30:20,TKT-20240305-001,Work Started,Sam Williams,Medium,Hardware,Engineering,Checking system temperatures
+344,2024-03-05 12:15:35,TKT-20240305-001,Ticket Resolved,Sam Williams,Medium,Hardware,Engineering,Cleaned dust from fans and vents
+345,2024-03-05 12:20:50,TKT-20240305-001,Ticket Closed,Sam Williams,Medium,Hardware,Engineering,Fan noise reduced to normal levels
+346,2024-03-06 09:15:25,TKT-20240306-001,Ticket Created,Unassigned,High,Security,Sales,Multiple failed login attempts on account
+347,2024-03-06 09:20:40,TKT-20240306-001,Ticket Assigned,Morgan Davis,High,Security,Sales,L2 security specialist assigned
+348,2024-03-06 09:35:15,TKT-20240306-001,Work Started,Morgan Davis,High,Security,Sales,Reviewing authentication logs
+349,2024-03-06 10:20:30,TKT-20240306-001,Resolution Proposed,Morgan Davis,High,Security,Sales,Brute force attempt detected - blocking IPs
+350,2024-03-06 10:50:45,TKT-20240306-001,Ticket Resolved,Morgan Davis,High,Security,Sales,Account secured and MFA enabled
+351,2024-03-06 10:55:35,TKT-20240306-001,Ticket Closed,Morgan Davis,High,Security,Sales,User notified of security incident
+352,2024-03-07 13:30:50,TKT-20240307-001,Ticket Created,Unassigned,Medium,Network,IT,WiFi dead zone in conference room B
+353,2024-03-07 14:00:15,TKT-20240307-001,Ticket Assigned,Chris Johnson,Medium,Network,IT,Assigned to L1 support
+354,2024-03-07 14:25:40,TKT-20240307-001,Work Started,Chris Johnson,Medium,Network,IT,Testing signal strength
+355,2024-03-07 15:10:25,TKT-20240307-001,Escalated to L2,Taylor Chen,Medium,Network,IT,Need wireless infrastructure assessment
+356,2024-03-07 15:35:50,TKT-20240307-001,Work Started,Taylor Chen,Medium,Network,IT,Site survey and access point placement
+357,2024-03-07 16:45:20,TKT-20240307-001,Resolution Proposed,Taylor Chen,Medium,Network,IT,Need additional access point for coverage
+358,2024-03-07 17:10:35,TKT-20240307-001,Awaiting Parts,Taylor Chen,Medium,Network,IT,Access point ordered
+359,2024-03-11 10:30:45,TKT-20240307-001,Parts Received,Taylor Chen,Medium,Network,IT,Access point arrived
+360,2024-03-11 11:15:30,TKT-20240307-001,Work Resumed,Taylor Chen,Medium,Network,IT,Installing new access point
+361,2024-03-11 13:45:50,TKT-20240307-001,Ticket Resolved,Taylor Chen,Medium,Network,IT,Full WiFi coverage in conference room
+362,2024-03-11 13:50:25,TKT-20240307-001,Ticket Closed,Taylor Chen,Medium,Network,IT,Signal strength verified
+363,2024-03-08 11:20:40,TKT-20240308-001,Ticket Created,Unassigned,Low,Access,HR,Update distribution list membership
+364,2024-03-08 11:45:15,TKT-20240308-001,Ticket Assigned,Pat Anderson,Low,Access,HR,Assigned to L1 support
+365,2024-03-08 12:10:35,TKT-20240308-001,Work Started,Pat Anderson,Low,Access,HR,Modifying Exchange distribution group
+366,2024-03-08 12:35:50,TKT-20240308-001,Ticket Resolved,Pat Anderson,Low,Access,HR,Distribution list updated
+367,2024-03-08 12:40:20,TKT-20240308-001,Ticket Closed,Pat Anderson,Low,Access,HR,User confirmed email delivery
+368,2024-03-11 15:25:30,TKT-20240311-001,Ticket Created,Unassigned,Medium,Software,Engineering,IDE crashing frequently
+369,2024-03-11 15:50:45,TKT-20240311-001,Ticket Assigned,Sam Williams,Medium,Software,Engineering,Assigned to L1 support
+370,2024-03-11 16:15:20,TKT-20240311-001,Work Started,Sam Williams,Medium,Software,Engineering,Checking IDE logs and extensions
+371,2024-03-11 16:50:40,TKT-20240311-001,Escalated to L2,Alex Martinez,Medium,Software,Engineering,Complex development environment issue
+372,2024-03-12 09:20:15,TKT-20240311-001,Work Started,Alex Martinez,Medium,Software,Engineering,Reproducing crash and analyzing logs
+373,2024-03-12 10:45:35,TKT-20240311-001,Resolution Proposed,Alex Martinez,Medium,Software,Engineering,Conflicting extension - disabling and updating
+374,2024-03-12 11:20:50,TKT-20240311-001,Ticket Resolved,Alex Martinez,Medium,Software,Engineering,IDE stable after extension cleanup
+375,2024-03-12 11:25:25,TKT-20240311-001,Ticket Closed,Alex Martinez,Medium,Software,Engineering,User confirmed no crashes for 2 hours
+376,2024-03-12 14:35:40,TKT-20240312-001,Ticket Created,Unassigned,High,Performance,Finance,Financial reporting queries timing out
+377,2024-03-12 15:00:25,TKT-20240312-001,Ticket Assigned,Chris Johnson,High,Performance,Finance,Assigned to L1 support
+378,2024-03-12 15:25:50,TKT-20240312-001,Work Started,Chris Johnson,High,Performance,Finance,Testing query execution
+379,2024-03-12 15:50:15,TKT-20240312-001,Escalated to L2,Jordan Lee,High,Performance,Finance,Database query optimization needed
+380,2024-03-12 16:20:35,TKT-20240312-001,Work Started,Jordan Lee,High,Performance,Finance,Analyzing execution plans
+381,2024-03-13 10:15:50,TKT-20240312-001,Escalated to L3,Casey Brown,High,Performance,Finance,Complex query tuning - need senior DBA
+382,2024-03-13 10:45:20,TKT-20240312-001,Work Started,Casey Brown,High,Performance,Finance,Advanced query optimization
+383,2024-03-13 14:30:40,TKT-20240312-001,Resolution Proposed,Casey Brown,High,Performance,Finance,Partitioning and indexing strategy implemented
+384,2024-03-13 15:20:25,TKT-20240312-001,Ticket Resolved,Casey Brown,High,Performance,Finance,Reports generating in under 30 seconds
+385,2024-03-13 15:25:50,TKT-20240312-001,Ticket Closed,Casey Brown,High,Performance,Finance,Finance team confirmed acceptable performance
+386,2024-03-14 09:40:35,TKT-20240314-001,Ticket Created,Unassigned,Low,Software,Sales,Zoom screen sharing not working
+387,2024-03-14 10:05:50,TKT-20240314-001,Ticket Assigned,Pat Anderson,Low,Software,Sales,Assigned to L1 support
+388,2024-03-14 10:30:15,TKT-20240314-001,Work Started,Pat Anderson,Low,Software,Sales,Checking Zoom permissions
+389,2024-03-14 11:05:40,TKT-20240314-001,Ticket Resolved,Pat Anderson,Low,Software,Sales,Granted screen recording permission in macOS
+390,2024-03-14 11:10:25,TKT-20240314-001,Ticket Closed,Pat Anderson,Low,Software,Sales,Screen sharing working properly
+391,2024-03-15 12:50:30,TKT-20240315-001,Ticket Created,Unassigned,Medium,Hardware,Operations,Server backup battery alarm
+392,2024-03-15 13:15:45,TKT-20240315-001,Ticket Assigned,Alex Martinez,Medium,Hardware,Operations,L2 hardware specialist assigned
+393,2024-03-15 13:40:20,TKT-20240315-001,Work Started,Alex Martinez,Medium,Hardware,Operations,Testing UPS battery health
+394,2024-03-15 14:25:35,TKT-20240315-001,Awaiting Parts,Alex Martinez,Medium,Hardware,Operations,UPS battery replacement needed
+395,2024-03-19 11:30:50,TKT-20240315-001,Parts Received,Alex Martinez,Medium,Hardware,Operations,Replacement battery delivered
+396,2024-03-19 12:15:25,TKT-20240315-001,Work Resumed,Alex Martinez,Medium,Hardware,Operations,Installing new UPS battery
+397,2024-03-19 13:45:40,TKT-20240315-001,Ticket Resolved,Alex Martinez,Medium,Hardware,Operations,UPS battery replaced and tested
+398,2024-03-19 13:50:15,TKT-20240315-001,Ticket Closed,Alex Martinez,Medium,Hardware,Operations,Power backup operational
+399,2024-03-18 10:25:35,TKT-20240318-001,Ticket Created,Unassigned,Low,Access,Engineering,Request access to production logs
+400,2024-03-18 10:50:50,TKT-20240318-001,Ticket Assigned,Morgan Davis,Low,Access,Engineering,Assigned to L2 for access management
+401,2024-03-18 11:15:20,TKT-20240318-001,Work Started,Morgan Davis,Low,Access,Engineering,Reviewing access request
+402,2024-03-18 11:45:40,TKT-20240318-001,Awaiting User Response,Morgan Davis,Low,Access,Engineering,Need justification for production access
+403,2024-03-20 09:30:15,TKT-20240318-001,User Responded,Morgan Davis,Low,Access,Engineering,Provided debugging justification
+404,2024-03-20 09:50:35,TKT-20240318-001,Work Resumed,Morgan Davis,Low,Access,Engineering,Granting read-only log access
+405,2024-03-20 10:25:50,TKT-20240318-001,Ticket Resolved,Morgan Davis,Low,Access,Engineering,Log access granted with time limit
+406,2024-03-20 10:30:25,TKT-20240318-001,Ticket Closed,Morgan Davis,Low,Access,Engineering,User confirmed log visibility
