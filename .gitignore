@@ -11,3 +11,6 @@ wheels/
 
 # environment
 .env
+
+# data
+examples/example_4/data/
