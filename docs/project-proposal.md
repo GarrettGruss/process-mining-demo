@@ -1,195 +1,99 @@
-# Prompt
-
-Your project proposal should be around 3-5 double-spaced pages in length that should include the following:
-
-- A proper title (not just project for CS 8317)
-- A proper abstract written as an executive summary clearly identifying the problem that you are going to address with some basic background information, the solution strategy you intend to use:
-  - Which implementation approach is being taken
-  - Which analysis/modeling technique to be used?
-- A rough schedule
-- For application-type projects, in addition to the above, you also need to discuss:
-  - Data collection
-  - Data analysis of result to be performed
-- Follow up actions
-
-Length Target
-- Abstract: 0.5 pages
-- Background: 0.75 pages
-- Implementation: 1.5 pages
-- Data Collection/Analysis: 1 page
-- Visualization: 0.5 pages
-- Schedule/Milestones: 0.5 pages
-- Challenges: 0.25 pages = ~5 pages total
-
 # Event-Driven Process Mining for Failure Cascade Detection in Vehicle Telemetry Systems
 
 ## Abstract
 
-### Claude notes
-Background (1-2 sentences):
-- Current state: Manual investigation of telemetry anomalies
-- Problem: Time-consuming, error-prone, difficult to identify failure cascades
+Modern motorsports teams generate gigabytes of telemetry data per race, yet analysis of this data is still predominantly a manual operation. Engineers groom and manipulate the data by hand to identify anomalies within the stream of sensor data, manually classifying discrete system failures and reconstructing the sequence of events leading to system failure or events of interest. This process is time-consuming, fault-prone, and lacks scalability.
 
-Proposed Solution (2-3 sentences):
-- Extract discrete events from continuous telemetry using threshold detection and signal processing
-- Construct temporal traces using time-windowed case generation around critical events
-- Apply process mining (PM4PY) to generate Directly-Follows Graphs (DFG) showing event relationships and timing
-
-Expected Outcomes (1-2 sentences):
-- Automated visualization of failure cascades (Fault Tree Analysis)
-- Identification of nominal vs. anomalous event sequences (variant analysis)
-- Quantifiable performance metrics (cycle time, event frequencies)
-Dataset (1 sentence):
-- Validation using 2016 FSAE endurance race telemetry (190k+ sensor samples, 22 laps, 32+ minutes)
-
-### My notes
-
-Explain how the traditional method to analyze telemetry data is by observing anomalies in the data, and then investigating the system state before and after the anomaly. Reconstructing the state of the system leading to a failure is manual and time consuming. We introduce a methdology to extract discrete events from telemetry data and reconstruct event traces using a time-window approach. We then perform a process mining operation on the discrete events to reconstruct a markov chain and timing graph of the events.
-
-This methodology can be used to generate graphs for:
-- Fault Tree Analysis to identify how failures cascade across a system (ex: from a minor fault to system failure)
-- Event Tree Analysis to identify which events are related to each other for system debugging or analysis
-- variant analysis to identify the nominal path of events, and the non-nominal or defect paths.
+In this project, we propose the application of process mining techniques from the business intelligence world for discovery and analysis of discrete system events and states on vehicle telemetry data. We present a methdology of event classification using threshold and signal process algorithms. These events are organized into temporal traces using a time-window approach centered on an event of interest. To construct the event graphs, we utilize the PM4PY library to construct Directly-Follows Graphs (DFGs) that visualize event relationships, transition probabilities, and timing characteristics.
 
 ## Background Information
 
-### Claude Notes
-Why this matters:
-- Motorsport teams analyze gigabytes of telemetry per session
-- Current tools (MoTeC, AIM) focus on individual sensor visualization
-- Failure diagnosis requires expert knowledge to correlate multiple sensors
-- Process mining has proven effective in business processes but underutilized in time-series domains
+### The Challenge of Telemetry Analysis
 
-Related Work:
-- Process mining in manufacturing (predictive maintenance)
-- Anomaly detection in telemetry (traditional ML approaches)
-- Gap: No established methodology for extracting process models from continuous sensor data
+Motorsports teams generate gigabytes of telemetry data per session using data acquisition systems such as AiM and MoTeC. These systems capture dozens to hundreds of sensor channels at high frequencies, producing rich datasets that document multiple aspects of vehicle behavior. However, current analysis tools focus primarily on individual sensor visualization—engineers examine time-series plots, overlay channels, and manually search for correlations between sensor readings and vehicle behavior.
+
+Diagnosing failures in this environment requires expert knowledge to correlate multiple sensors and reconstruct the sequence of events leading to an issue. When a failure occurs, engineers must manually trace backward through the data, identifying which events preceded the failure and hypothesizing causal relationships. This approach becomes increasingly difficult when failures involve cascading effects across multiple subsystems, where a minor fault in one component triggers a chain reaction affecting others.
+
+### Process Mining: A Solution from Business Intelligence
+
+Process mining is a family of techniques developed by a Dutch computer scientist by the name of Wil van der Aalst for the analysis of business and manufacturing workflows. While this methodology has proven useful in the business domain, it remains underutilized in time-series telemetry data due to the requirement of discrete events. This project address that gap by introducing a methodology to transform continuous telemetry data into discrete system events suitable for process mining and analysis.
+
+### Target Use Cases
+
+This methodology targets several valuable analysis patterns:
+
+1. **Fault Tree Analysis**: Identify how failures cascade across a system by observing how minor events escalate into major failures. Process mining reveals the statistical patterns of failure propagation across many instances.
+
+2. **Event Tree Analysis**: Discover which system events are related to each other, enabling engineers to understand the forward consequences of specific conditions or actions.
+
+3. **Variant Analysis**: Identify the nominal sequence of events during normal operation and contrast it with non-nominal or defect paths, highlighting where behavior diverges from expectations.
 
 ## Implementation Approach
 
-### Claude Notes
-Current section is too brief. Add: Event Extraction Algorithms:
-- Threshold-based detection (e.g., brake pressure > 50 psi = "Brake Applied")
-- State change detection (e.g., gear shifts)
-- Combined condition events (e.g., hard braking = high brake pressure AND high deceleration)
-- Local extrema detection using scipy.signal.find_peaks (e.g., corner apex = max lateral g)
+### Event Classification
 
-Time-Window Trace Construction:
-- Trigger event selection (e.g., "Full Throttle", "Bumpstop Hit")
-- Configurable window parameters (time_before, time_after)
-- Handling overlapping windows (events copied to multiple cases)
-- Case ID assignment and temporal ordering
+In the event classification stage, continuous sensor telemetry is classified into discrete events using an `EventExtractor` class. The extractor supports threshold-based detection to detect when a sensor value crosses a defined limit (ex: brake pressure > 50 PSI creates a "brake applied" event), combined condition detection (ex: high brake pressure and high deceleration creates a "hard braking" event), and local extrema detection using `scipy` to identify peaks and valleys in sensor data (ex: maximum lateral g-force creates a "corner apex" event). Each algorithm is configurable and includes debounding to prevent event creation from sensor noise. The output is a structured list of events and their timestamp.
 
-Process Mining Techniques:
-- Performance DFG: Shows average time between events
-- Markov Chain DFG: Shows frequency/probability of transitions
-- Variant Analysis: Identifies unique event sequences
-- Statistical metrics: Cycle time, lead time, flow rate
+### Time-Window Trace Construction
 
-### My Notes
+The process mining algorithms requires events to be organized by a trace id representing each workflow occurance. The `CaseGenerator` class implements a temporal trace to draw a time-window around an event of interest (ex: "bumpstop hit" or "full throttle" event),  constructing a local trace. When events occur in rapid succession and the windows overlap, events are copied to maintain a complete trace. The output of this stage is a list of event traces ready for process discovery and analysis.
 
-- The dataset being used is the telemetry log of a [2016 FSAE endurance vehicle](https://huggingface.co/datasets/nominal-io/UCONN_FSAE_2016_Endurance). Note, if a different log should be used, there are [more options](https://huggingface.co/datasets?search=telemetry) on hugging face.
-- Need to write code to extract events (and document which algorithms are being used). Potential use of algorithms for classification of events from the telemetry data.
-- Need to write code to construct time-window traces
-- Need to create a plotting function to display variants
+### Process Mining Analysis
+
+Once the event trace log is constructed, event discovery can be performing using the PM4PY library. Directly-Follows Graphs (DFG) are generated, showing the order of events, the average timing between events, and the transition counts between states. Variant analysis can also be performed to identify all unique event sequences across cases, ranking them by frequency to identify nominal system behavior and alternative paths. Standard process mining metrics such as cycle time, lead time, and event frequencies can also be generated to provide quantitative characterization of the discovered patterns.
 
 ## Data Collection and Analysis
 
-### Claude Notes
-Data Collection:
-- Source: UCONN FSAE 2016 Endurance dataset on HuggingFace
-- Format: AiM CSV telemetry (190,587 rows)
-- Sampling rate: 100 Hz
-- Channels: 75+ (suspension, acceleration, engine, GPS, etc.)
-- Duration: ~32 minutes (1905 seconds), 22 laps
+### Dataset
 
-Data Preprocessing:
-- Parse AiM metadata (venue, vehicle, timestamps)
-- Type conversion and validation using Pandera
-- Lap detection via time resets
-- Absolute timestamp calculation
-- Missing data handling
+This project uses the UCONN FSAE 2016 Endurance dataset, publicly available on HuggingFace. The dataset contains telemetry from a Formula SAE racecar during an endurance event, recorded by an AiM data acquisition system. The data comprises 190,587 rows sampled at 100 Hz, spanning approximately 32 minutes (1905 seconds) across 22 laps. Over 75 sensor channels capture suspension travel, acceleration (longitudinal, lateral, vertical), engine parameters (RPM, throttle position, temperatures), brake pressure, steering angle, GPS coordinates, and wheel speeds.
 
-Event Extraction Validation:
-- Expected: 8000+ discrete events from continuous data
-- Event categories: Lap transitions, gear shifts, braking, cornering, suspension, engine
-- Quality metrics: Event frequency distribution, temporal consistency
+### Event Extraction Validation
 
-Analysis Metrics:
-- Number of unique process variants
-- Most common event sequences (top 10)
-- Timing relationships between critical events
-- Anomaly identification (deviations from nominal paths)
+From the continuous telemetry, we expect to extract 8,000+ discrete events across multiple categories: lap transitions (start/finish line crossings), gear shifts (approximately 20-30 per lap), braking events (brake application and release), cornering events (apex detection via lateral acceleration peaks), suspension events (bumpstop contacts, full droop), and engine events (redline hits, throttle cut). Validation involves verifying that event frequencies match expected ranges based on track characteristics and confirming temporal consistency—events should not occur faster than physically possible.
 
-## Visualization Strategy (Expand)
+### Analysis Metrics
 
-### Claude Notes
-Output Artifacts:
-- Performance DFG - Network graph with timing annotations
-- Markov DFG - Network graph with frequency annotations
-- Chevron Workflow Diagrams - Color-coded event sequences for top variants
-- Statistical Dashboards - Event distribution, case summaries
+The process mining analysis will produce several quantitative outputs: the total number of unique process variants discovered, the frequency distribution of the top 10 most common event sequences, timing statistics for transitions between critical events (e.g., mean time from brake application to corner apex), and identification of anomalous variants that deviate significantly from nominal patterns. These metrics enable both aggregate characterization of driving behavior and identification of specific instances warranting detailed investigation.
 
-## Expected Contributions
+## Visualization Strategy
 
-### Claude Notes
-Methodological:
-- Reusable framework for extracting discrete events from continuous sensor data
-- Time-window case generation approach applicable to any telemetry source
-- Integration of signal processing with process mining
+The project produces several visualization artifacts to communicate discovered patterns. Directly-Follows Graphs are rendered as network diagrams where nodes represent event types and directed edges show observed transitions. The Performance DFG annotates edges with average inter-event timing, while the Frequency DFG displays transition counts or probabilities. Node sizing reflects event frequency, and edge thickness indicates transition strength. These graphs are generated using PM4PY's built-in visualization and exported as PNG or SVG.
 
-Practical:
-- Automated fault cascade visualization
-- Driver behavior pattern identification
-- Performance optimization insights for FSAE teams
+Chevron Workflow Diagrams provide a linear representation of process variants. Each variant is displayed as a sequence of colored boxes (chevrons) representing events in order. The top variants are shown side-by-side, enabling visual comparison of common paths versus deviations. Color coding groups related event types (e.g., all braking events in red, all cornering events in blue) for rapid pattern recognition.
 
-Technical:
-- Open-source Python implementation (EventExtractor, CaseGenerator classes)
-- Extensible to other domains: aircraft telemetry, industrial IoT, medical monitoring
+Statistical Dashboards summarize the event log characteristics: histograms of event type frequencies, box plots of case durations, and tables of variant statistics. These provide the quantitative context needed to interpret the process models and provide a high level overview of the analysis findings.
 
-## Follow-up Actions
+## Schedule and Milestones
 
-## Claude Notes
-Immediate (Week 1-2):
-- Literature review: Process mining in time-series contexts
-- Implement and validate EventExtractor class
-- Document threshold selection methodology
+The project spans seven weeks with the following deliverables and milestones:
 
-Mid-term (Week 3-5):
-- Implement CaseGenerator with time-window logic
-- Generate preliminary DFGs for multiple trigger events
-- Perform variant analysis and identify patterns
+**Phase 1: Foundation (Week 1-2, 1/23 - 2/5)**
+- Complete literature review on process mining in time-series contexts
+- Implement and validate the `EventExtractor` class with threshold-based detection
+- Document threshold selection methodology and validate against known events
+- **Deliverable: Literature Research (due 1/30/26)**
 
-Final (Week 6-7):
-- Create chevron visualization functions
-- Statistical validation of discovered patterns
-- Document findings and prepare presentation
+**Phase 2: Core Implementation (Week 3-5, 2/6 - 2/26)**
+- Implement `CaseGenerator` with time-window trace construction
+- Generate preliminary DFGs for multiple trigger event types
+- Perform initial variant analysis and identify patterns in the FSAE dataset
+- Iterate on event definitions based on discovered patterns
+- **Deliverable: Project Progress and Preliminary Analysis (due 2/20/26)**
 
-Future Extensions:
-- Real-time event detection for live telemetry
-- Machine learning for automatic threshold tuning
-- Comparative analysis across multiple race sessions
-- Integration with existing motorsport tools
+**Phase 3: Analysis and Documentation (Week 6-7, 2/27 - 3/6)**
+- Create chevron visualization functions for variant display
+- Conduct statistical validation of discovered patterns
+- Prepare presentation materials and final report
+- **Deliverable: Project Presentation (due 3/5/26)**
+- **Deliverable: Project Report (due 3/6/26)**
 
-## Schedule
-
-Consider combining with follow up actions.
-
-- Start on 1/23/26
-- (Hard Deliverable) Literature Research due 1/30/26
-- (Hard Deliverable) Project Progress and Preliminary Analysis due 2/20/26
-- (Hard Deliverable) Project Presentation due 3/5/26
-- (Hard Deliverable) Project Report due 3/6/26
+**Future Extensions** (beyond project scope): Real-time event detection for live telemetry, machine learning for automatic threshold tuning, comparative analysis across multiple race sessions, and integration with existing motorsport analysis tools.
 
 ## Challenges & Risk Mitigation
 
-### Claude Notes
-Potential Challenges:
-- Threshold selection - Risk of spurious events or missing events
-    - Mitigation: Sensitivity analysis, expert validation
-- Time-window sizing - Windows too small miss context, too large create noise
-    - Mitigation: Multiple window sizes, comparative analysis
-- Scalability - Large telemetry files may cause memory issues
-    - Mitigation: Chunked processing, sampling strategies
-- Interpretability - DFGs may be too complex with many event types
-    - Mitigation: Event filtering, hierarchical abstraction
+Threshold selection risks generating spurious events from noise or missing genuine events from overly conservative limits. We mitigate this through sensitivity analysis across threshold ranges and validation against manually-identified events by domain experts.
+
+Time-window sizing presents a tradeoff: windows too small miss relevant context, while windows too large introduce noise and blur causal relationships. We address this by testing multiple window sizes and comparing the resulting process models for stability and interpretability.
+
+Interpretability challenges emerge when many event types create overly complex DFGs that are difficult to analyze. We mitigate this through event filtering to focus on relevant subsets, hierarchical abstraction grouping related events, and threshold-based edge filtering to show only significant transitions.
