@@ -4,6 +4,7 @@
 \usepackage{setspace}
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
+\usepackage{graphicx}
 
 \doublespacing
 
@@ -17,31 +18,18 @@
 
 \section{Social Network Mining from Event Logs}
 
-Van der Aalst, Reijers, and Song~\cite{vanderaalst2005} present a foundational approach for discovering social networks from event logs recorded by enterprise information systems. While traditional process mining focuses on control-flow and performance, this work extracts organizational relationships by analyzing performer information in event logs.
+Van der Aalst, Reijers, and Song~\cite{vanderaalst2005} present a foundational approach for discovering social networks from event logs. This work presents a collection of algorithms to extract system relationships by analyzing performer information in event logs, augmenting the control-flow graphs produced from traditional process-mining. The authors define four categories of metrics for constructing sociograms.
 
-The authors define four categories of metrics for constructing sociograms:
-\begin{enumerate}
-    \item \textbf{Metrics based on causality}: These track how work flows between performers. The \textit{handover of work} metric measures how often one performer's activity is directly followed by another's for the same case. The \textit{subcontracting} metric identifies when work is delegated and returned.
-    \item \textbf{Metrics based on joint cases}: These measure how frequently two individuals perform activities for the same process instance, indicating collaborative relationships.
-    \item \textbf{Metrics based on joint activities}: These compare performer ``profiles'' based on which activities they execute, using distance measures like Hamming distance and Pearson's correlation coefficient to identify similar roles.
-    \item \textbf{Metrics based on special event types}: These analyze events like reassignment or delegation to reveal hierarchical relationships.
-\end{enumerate}
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/social-network.png}
+  \caption{An Example Social Network \cite{vanderaalst2005}}
+\end{figure}
 
-The paper introduces MiSoN (Mining Social Networks), a tool that extracts event logs from systems like Staffware, converts them to a standardized XML format, and exports sociograms compatible with SNA tools such as AGNA, UCINET, and NetMiner.
-
-A case study at a Dutch public works department demonstrates the approach using approximately 5,000 invoice handling cases with 33,000 events involving 43 employees. The analysis revealed unexpected findings including duplicate user accounts, informal performer specialization, and inefficient routing patterns causing over 17\% of invoices to experience erroneous back-and-forth transfers.
-
-The work highlights important ethical considerations regarding privacy and employee monitoring, noting that while event logs can measure individual performance, organizations must comply with data protection legislation and obtain employee consent.
+\textbf{Metrics based on causality} track how work flows between performers. The \textit{handover of work} metric measures how often one performer's activity is directly followed by another's for the same case. The \textit{subcontracting} metric identifies when work is delegated and returned. \textbf{Metrics based on joint cases} measure how frequently two individuals perform activities for the same process instance, indicating collaborative relationships. \textbf{Metrics based on joint activities} compare performer ``profiles'' based on which activities they execute, using distance measures like Hamming distance and Pearson's correlation coefficient to identify similar roles. \textbf{Metrics based on special event types} analyze events like reassignment or delegation to reveal hierarchical relationships.
 
 \section{Event Detection from Time Series Data}
 
-Guralnik and Srivastava~\cite{guralnik1999} address a fundamental preprocessing challenge in temporal data mining: automatically detecting events from raw sensor time series data. While most temporal pattern mining assumes events are already identified, this work tackles the problem of determining \textit{when} significant behavioral changes occur---the change-point detection problem.
-
-The authors generalize traditional approaches in two key ways:
-\begin{enumerate}
-    \item \textbf{Unknown number of change-points}: Rather than requiring the number of change-points to be specified a priori, the algorithm iteratively discovers them using a likelihood-based stopping criterion.
-    \item \textbf{Flexible model selection}: Instead of assuming a fixed functional form between change-points, the approach uses universal approximation theory with basis functions (e.g., polynomials) and selects the best model via cross-validation.
-\end{enumerate}
+Guralnik and Srivastava~\cite{guralnik1999} presents an approach to detect events from raw sensor telemetry. This work focuses on determining when significant behavioral changes occur in a system using two key methodologies. \textbf{Unknown number of change-points}: Rather than requiring the number of change-points to be specified a priori, the algorithm iteratively discovers them using a likelihood-based stopping criterion. \textbf{Flexible model selection}: Instead of assuming a fixed functional form between change-points, the approach uses universal approximation theory with basis functions (e.g., polynomials) and selects the best model via cross-validation.
 
 The core algorithm uses maximum likelihood estimation (MLE) to evaluate candidate change-points. For a time series $y(t)$, the method fits piecewise models $f_i(t, \mathbf{w}_i)$ to segments and minimizes the likelihood criterion $\mathcal{L} = \sum_{i=1}^{k} m_i \log \sigma_i^2$ for heteroscedastic errors. A hierarchical splitting procedure examines each segment to determine if partitioning improves the overall likelihood significantly.
 
@@ -51,111 +39,37 @@ Two algorithm variants are presented:
     \item \textbf{Incremental algorithm}: Detects change-points in real-time as data arrives, useful for online monitoring applications like highway traffic control. Uses a likelihood increase threshold $\delta$ to confirm detected changes.
 \end{itemize}
 
-Experimental evaluation on synthetic saw-tooth functions demonstrates robustness to noise when the signal-to-noise ratio is adequate ($h \geq 8$). Real-world validation uses highway loop detector data sampled at 5-minute intervals over 24-hour periods. Comparison with human visual inspection shows the algorithm produces statistically superior segmentations by the likelihood measure, avoiding the human tendency to over-segment smooth curves into piecewise linear approximations.
-
-This work provides essential methodology for converting continuous sensor streams into discrete event sequences suitable for subsequent episode mining and pattern discovery.
-
 \section{Fault Diagnosis Using Digraph-Based Fault Trees}
 
-James, Gandhi, and Deshmukh~\cite{james2017} address the challenge of systematic fault diagnosis in automobile systems, extending the digraph-based fault tree methodology originally developed by Lapp and Powers for chemical process industries. The approach provides a structured method for developing fault trees that explicitly incorporates system topology.
+James, Gandhi, and Deshmukh~\cite{james2017} demonstrate the usage of a digraph-based fault tree for analysis of automobile systems. The researchers break the automobile system down into a hierarchical structure of subsystems, assemblies, and components. The researchers map the critical parameters of Pressure (P), Mass flow rate (M), and Temperature (T) to each system component as input and output streams. An \textit{interrelationship table} is constructed to quantify how input paramters affect output paramters using a gain value. The individual component digraphs are then combined into a complete system digraph.
 
-The methodology centers on \textit{directed graphs} (digraphs) that model relationships between system parameters. Each node represents a measurable parameter (pressure, flow rate, temperature), and directed edges capture how deviations in one parameter cause deviations in others. The authors define two types of parameter relationships:
-\begin{itemize}
-    \item \textbf{Normal gain}: A positive deviation in the input causes a positive deviation in the output (and vice versa for negative deviations).
-    \item \textbf{Inverse gain}: A positive deviation in the input causes a negative deviation in the output (and vice versa).
-\end{itemize}
-
-The fault tree development process follows two key steps:
-\begin{enumerate}
-    \item \textbf{Digraph construction}: Model the system by identifying parameters and their causal relationships based on physical principles and system structure.
-    \item \textbf{Fault tree synthesis}: Starting from a top-level deviation (the observed fault symptom), trace backward through the digraph to identify all possible root causes, generating the fault tree structure automatically.
-\end{enumerate}
-
-A significant contribution is handling \textit{feedback loops}, which are common in control systems. The authors demonstrate how cyclic paths in the digraph can be properly resolved in the fault tree by carefully tracking the propagation of deviations through the loop.
-
-The case study applies this methodology to a hydraulic power steering system. The digraph captures relationships among parameters including pump pressure, flow rates, steering effort, and valve positions. For the top event ``high steering effort,'' the resulting fault tree identifies root causes such as pump failure, low fluid level, belt slippage, and valve malfunctions. The hierarchical structure enables efficient diagnosis by guiding technicians through a logical sequence of checks.
-
-This work demonstrates how graph-based system modeling can bridge the gap between system design knowledge and diagnostic procedures, providing a systematic alternative to experience-based troubleshooting guides.
-
-\section{ISO 26262 Safety Cases for Automotive Systems}
-
-Palin, Ward, Habli, and Rivett~\cite{palin2011} address the emerging requirement for explicit safety cases in automotive functional safety under ISO 26262. While other safety-critical industries (nuclear, aerospace) have long required formal safety cases, the automotive domain has historically relied on implicit safety through compliance with regulations such as UN-ECE and FMVSS. The introduction of ISO 26262 changes this by requiring a functional safety case for electrical/electronic (E/E) systems.
-
-The authors identify a critical tension in ISO 26262's safety case requirement (clause 6.4.6.2): the standard could be interpreted as merely requiring a collection of work products, encouraging ``box ticking'' compliance rather than genuine safety assurance. They argue that a \textit{product safety argument}---not just process compliance---should form the core of any safety case. The four interdependent elements of a safety case are:
-\begin{itemize}
-    \item \textbf{Requirements}: Safety objectives that must be addressed, including predefined regulatory requirements and developed requirements from hazard analysis.
-    \item \textbf{Evidence}: Information from testing, analysis, and simulation that demonstrates compliance.
-    \item \textbf{Argument}: The logical structure showing how evidence satisfies requirements.
-    \item \textbf{Context}: The operational, environmental, and structural conditions under which the argument is valid.
-\end{itemize}
-
-The paper proposes using the \textit{Goal Structuring Notation} (GSN) to represent safety arguments graphically. GSN links goals (requirements), solutions (evidence), and strategies (argument) through ``supported by'' and ``in context of'' relationships. The modular extension of GSN allows safety cases to be decomposed into reusable modules that can independently stand up to scrutiny while capturing dependencies.
-
-The proposed safety case architecture consists of hierarchical modules:
-\begin{enumerate}
-    \item \textbf{Corporate Safety Policy}: Macro-level claims about a company's safety culture and management.
-    \item \textbf{Product Line Safety}: Arguments applicable to similar product variants.
-    \item \textbf{Product Safety}: Arguments specific to a particular vehicle or system, supported by Crash Protection, Particular Risks, and E/E Systems Safety sub-arguments.
-\end{enumerate}
-
-For E/E systems specifically, the authors distinguish between \textit{product arguments} (addressing safe behaviors through testing, analysis, and in-service history) and \textit{process arguments} (providing confidence in the trustworthiness of evidence). With over 100 work products required by ISO 26262, this structured approach helps organize material into manageable modules while making explicit why the evidence supports claims of acceptable residual risk.
+The methodology identifies events at multiple levels. \textbf{Top events} represent observable failure symptoms (loss of power, inefficient operation, hard steering, steering wheel vibration, and noise for the hydraulic system). \textbf{Intermediate events} capture parameter deviations propagating through the system, such as elevated oil temperature. \textbf{Basic events} terminate each fault tree branch and include component failures (vane pump failure, steering cylinder leakage, filter clogged), sub-failures (cavitation erosion, vane tip damage, seal failure), and maintenance-related causes (lack of maintenance, corrosion).
 
 \section{PM4Py: A Process Mining Library for Python}
 
-Berti, van Zelst, and van der Aalst~\cite{berti2019} introduced PM4Py, an open-source Python library designed to bridge the gap between process mining and data science. While existing tools such as ProM and Apromore provide graphical interfaces suitable for non-expert users, they hamper large-scale scientific experimentation and algorithmic customization. Commercial tools like Celonis and Disco offer even less flexibility for custom algorithm development. PM4Py addresses these limitations by integrating with the Python data science ecosystem (pandas, numpy, scipy, scikit-learn), enabling seamless combination of process mining with machine learning and statistical analysis.
-
-As detailed in subsequent work~\cite{berti2023}, PM4Py has evolved substantially, with over one million downloads. The library addresses three central disciplines:
-\begin{enumerate}
-    \item \textbf{Process discovery}: Automatically constructing process models from event logs using algorithms such as the alpha miner, inductive mining, heuristics miner, ILP miner, and correlation miner.
-    \item \textbf{Conformance checking}: Comparing observed behavior against modeled behavior using techniques including footprints, token-based replay, alignments, and log skeleton methods.
-    \item \textbf{Process enhancement}: Improving existing models based on observed data, including performance analysis and decision mining.
-\end{enumerate}
+Berti, van Zelst, and van der Aalst~\cite{berti2019} introduced PM4Py, an open-source Python library designed to bridge the gap between process mining and data science. The library addresses three central disciplines: \textbf{Process discovery}: Automatically constructing process models from event logs using algorithms such as the alpha miner, inductive mining, heuristics miner, ILP miner, and correlation miner. \textbf{Conformance checking}: Comparing observed behavior against modeled behavior using techniques including footprints, token-based replay, alignments, and log skeleton methods. \textbf{Process enhancement}: Improving existing models based on observed data, including performance analysis and decision mining.
 
 PM4Py supports multiple standard data formats for interoperability: the XES format for traditional event logs, OCEL for object-centric event logs, PNML for Petri nets, PTML for process trees, and BPMN 2.0 for business process models. The library provides diverse visualizations including directly-follows graphs (DFGs), process trees, accepting Petri nets, and BPMN diagrams, as well as analytical views such as dotted charts and performance spectra for temporal pattern detection.
 
-A notable feature is support for \textit{object-centric process mining} (OCPM), which extends traditional case-centric analysis to capture complex inter-object relationships. This addresses real-world scenarios where processes involve multiple interacting entities rather than isolated cases.
+Beyond process-focused analysis, PM4Py supports organizational mining through social network analysis (handover of work, working together, subcontracting metrics), role discovery, and resource profiling---connecting directly to the sociogram extraction work of van der Aalst et al.~\cite{vanderaalst2005}.
 
-The library evaluates log-model quality through multiple metrics:
-\begin{itemize}
-    \item \textbf{Fitness}: How well the model can reproduce observed behavior
-    \item \textbf{Precision}: Whether the model allows behavior not seen in the log
-    \item \textbf{Generalization}: Whether the model captures the underlying process rather than just the observed traces
-    \item \textbf{Simplicity}: The complexity of the resulting model
-\end{itemize}
+\section{Workflow Mining: The \texorpdfstring{$\alpha$}{Alpha}-Algorithm}
 
-The library follows key architectural principles that maximize code reuse and experimentation:
-\begin{itemize}
-    \item \textbf{Strict separation}: Objects (event logs, Petri nets, DFGs), algorithms (miners, conformance checkers), and visualizations are organized in distinct packages.
-    \item \textbf{Factory methods}: A standardized interface provides single access points for algorithms, accepting event data and parameters while allowing variant selection (e.g., Alpha vs. Alpha+ miner).
-    \item \textbf{Multiple data structures}: Support for event logs (lists of traces), event streams (unorganized events), and pandas DataFrames for efficient handling of large datasets.
-\end{itemize}
+Van der Aalst, Weijters, and Maruster~\cite{vanderaalst2004} present a foundational algorithm for discovering process models from event logs. The work addresses the \textit{rediscovery problem}: given a workflow log containing sequences of tasks executed for each case, can we reconstruct the underlying process model? The authors represent discovered processes as Petri nets, specifically \textit{Workflow nets} (WF-nets) with designated source and sink places.
 
-Beyond process-focused analysis, PM4Py supports organizational mining through social network analysis (handover of work, working together, subcontracting metrics), role discovery, and resource profiling---connecting directly to the sociogram extraction work of van der Aalst et al.~\cite{vanderaalst2005}. The library has achieved XES certification with maximum score and has become a foundational tool for both academic research and industry applications in healthcare, finance, and IT security.
+The approach relies on four \textbf{log-based ordering relations} derived from observed task sequences. The \textit{direct follows} relation ($a >_W b$) indicates task $b$ immediately followed task $a$ in some trace. The \textit{causal} relation ($a \rightarrow_W b$) holds when $a >_W b$ but not $b >_W a$, suggesting a dependency. The \textit{parallel} relation ($a \|_W b$) holds when tasks appear in both orders, indicating concurrent execution. The \textit{never follow} relation ($a \#_W b$) captures tasks that never directly succeed each other.
+
+The $\alpha$-algorithm constructs a WF-net by: (1) identifying all tasks from the log, (2) finding initial and final tasks, (3) discovering causal relationships to create places connecting causally related tasks, and (4) merging places appropriately to distinguish AND-splits/joins from OR-splits/joins based on the $\#_W$ relation.
+
+The authors prove that the $\alpha$-algorithm can \textit{rediscover} any process belonging to the class of \textbf{Structured Workflow nets (SWF-nets)}---sound WF-nets that are free-choice (no mixing of choice and synchronization) and contain no implicit places---provided the log is complete and the process contains no \textbf{short loops} (loops of length one or two). Short loops confound the algorithm because they make the causal relation symmetric, obscuring the underlying structure.
+
+The work acknowledges limitations: the algorithm cannot detect hidden (invisible) tasks, cannot distinguish duplicate tasks with identical labels, and requires a notion of log completeness where all directly-follows relationships have been observed. The authors validated their approach on real-world data from healthcare (patient flow analysis) and judicial processes (processing of 130,136 fine cases).
 
 \section{In-Vehicle Telematics for Driving Behavior Monitoring}
 
-Boylan, Meyer, and Chen~\cite{boylan2024} present a systematic review of 45 studies examining how in-vehicle telematics data has been used to monitor and model driving behaviors. With road traffic deaths reaching 1.35 million globally in 2016 and preventable behaviors (speeding, impaired driving, fatigue) being leading causes, telematics technology offers potential for both behavior improvement and risk assessment.
-
-The review identifies two primary application domains:
-\begin{enumerate}
-    \item \textbf{Insurance applications} (28 studies): Focused on improving claim frequency prediction models and classifying drivers as ``safe'' or ``risky'' for premium adjustment. Insurance companies use pay-as-you-drive (PAYD) and pay-how-you-drive (PHYD) schemes based on these classifications.
-    \item \textbf{Behavioral applications} (17 studies): Investigating how telematics feedback influences driving behavior and measuring the effectiveness of interventions.
-\end{enumerate}
-
-The most commonly analyzed telematics variables were:
-\begin{itemize}
-    \item \textbf{Speed} (32 studies): Measured as average velocity, time above speed limit, or speeding event counts
-    \item \textbf{Acceleration} (32 studies): Often using thresholds (e.g., 0.3--0.7 g's) to identify ``harsh'' events
-    \item \textbf{Braking} (24 studies): Similar threshold-based detection of harsh braking
-    \item \textbf{Distance/driving time} (15 studies): Trip distance, duration, and contextual factors (urban/rural, day/night)
-    \item \textbf{Turning/cornering} (14 studies): Lateral acceleration and turn frequency
-\end{itemize}
+Boylan, Meyer, and Chen~\cite{boylan2024} present a systematic review of 45 studies examining how in-vehicle telematics data has been used to monitor and model driving behaviors. The most commonly analyzed telematics variables were speed, acceleration, braking, distance/driving time, and turning/cornering.
 
 Machine learning dominated the analysis approaches (22 studies), particularly for insurance applications. Neural networks, random forests, support vector machines, and XGBoost were used to create predictive models for crash risk and driver classification. For claim frequency prediction, Poisson regression models enhanced with neural network-derived risk scores significantly outperformed classical insurance models. Logistic regression, while slightly less accurate than complex machine learning models, was recommended for crash risk prediction due to its interpretability.
-
-Studies on behavioral interventions found that feedback combined with financial incentives produced improvements in driving behavior, with reductions in harsh braking, harsh acceleration, and speeding. However, the review notes methodological limitations: most studies failed to account for the \textit{hierarchical structure} of telematics data (trips nested within drivers) and rarely controlled for demographic factors or vehicle differences.
-
-The authors recommend that future studies use multi-level models to properly account for trip-level and driver-level variables, provide detailed demographic information, and standardize definitions of trips and harsh events to enable cross-study comparisons.
 
 \section{Fault Tree Analysis for Automotive Reliability and Safety}
 
@@ -181,9 +95,15 @@ The FTA methodology follows a structured sequence:
     \item Conduct tradeoff studies and document results
 \end{enumerate}
 
-A case study of a car starting system demonstrates the approach. The top event ``car does not start as intended'' is decomposed using success criteria: a car successfully starts when the engine crankshaft rotates as intended AND adequate combustion occurs in all cylinders. Taking the Boolean complement yields the failure logic. The resulting fault tree identified 35 minimal cut sets, including 19 single-point failures. Notably, the park neutral switch and oxygen sensor were identified as single-point failures---safety devices that paradoxically affect reliability.
-
 Lambert emphasizes that FTA's value lies in showing logical progressions and system interactions not displayed in traditional FMEA, while FMEA can identify candidate undesired events for FTA. With increasing automotive electronics in engine control, cruise control, and braking systems, FTA is particularly well-suited to address complex failure mode interactions---complementing the digraph-based approach described by James et al.~\cite{james2017}.
+
+\section{The SHIP Safety Case Approach}
+
+Bishop and Bloomfield~\cite{bishop1995} present a formalized safety case approach developed under the EU SHIP project (Safety of Hazardous Industrial Plants). A key contribution is the \textbf{system failure behavior model}, which defines five system states. \textbf{Perfect}: The system contains no faults. \textbf{OK}: The system contains faults but operates correctly because no triggering input has been encountered. \textbf{Erroneous}: A fault has been activated, causing computed values to deviate from design intent. \textbf{Safe}: The system has failed but in a non-hazardous manner. \textbf{Dangerous}: The system has failed in a hazardous manner.
+
+The model identifies six state transitions, each governed by distinct factors. \textbf{Perfect $\rightarrow$ OK} (fault introduced): Probability depends on development process quality, maintenance procedures, and system documentation. \textbf{OK $\rightarrow$ Perfect} (fault removal): Enabled by testing, bug reporting and correction, and accumulated field usage that reveals latent faults. \textbf{OK $\rightarrow$ Erroneous} (error activation): Probability depends on the number of faults, their size and distribution within the code, and the operational profile (input distribution). \textbf{Erroneous $\rightarrow$ OK} (error correction): Achieved through fault-tolerant design features, application characteristics such as ``grace time,'' or natural self-healing in subsequent computations. \textbf{Erroneous $\rightarrow$ Safe} (safe failure): Enabled by fail-safe design that detects deviations and overrides with safe alternatives. \textbf{Erroneous $\rightarrow$ Dangerous} (dangerous failure): Occurs when failure containment mechanisms are absent or insufficient for the hazards present.
+
+This model enables three main safety argument strategies: (1) \textit{fault elimination} arguments that maximize the probability of remaining in the ``perfect'' state, (2) \textit{failure containment} arguments that strengthen recovery transitions back to OK or to the safe state, and (3) \textit{failure rate estimation} arguments based on black-box testing or field experience that directly estimate the OK $\rightarrow$ dangerous transition probability.
 
 \bibliographystyle{plain}
 \begin{thebibliography}{9}
@@ -197,6 +117,11 @@ in \textit{Proceedings of the 1st International Conference on Process Mining (IC
 A. Berti, S. van Zelst, and D. Schuster,
 ``PM4Py: A Process Mining Library for Python,''
 \textit{Software Impacts}, vol. 17, p. 100556, 2023.
+
+\bibitem{bishop1995}
+P.G. Bishop and R.E. Bloomfield,
+``The SHIP Safety Case Approach,''
+in \textit{Proceedings of SafeComp95}, Belgirate, Italy, pp. 437--451, 1995.
 
 \bibitem{boylan2024}
 J. Boylan, D. Meyer, and W.S. Chen,
@@ -213,15 +138,15 @@ H.E. Lambert,
 ``Use of Fault Tree Analysis for Automotive Reliability and Safety Analysis,''
 in \textit{Proceedings of the 2004 SAE World Congress}, Detroit, Michigan, 2004.
 
-\bibitem{palin2011}
-R. Palin, D. Ward, I. Habli, and R. Rivett,
-``ISO 26262 Safety Cases: Compliance and Assurance,''
-in \textit{Proceedings of the 6th IET International Conference on System Safety}, 2011.
-
 \bibitem{guralnik1999}
 V. Guralnik and J. Srivastava,
 ``Event Detection from Time Series Data,''
 in \textit{Proceedings of the Fifth ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '99)}, pp. 33--42, 1999.
+
+\bibitem{vanderaalst2004}
+W.M.P. van der Aalst, A.J.M.M. Weijters, and L. Maruster,
+``Workflow Mining: Discovering Process Models from Event Logs,''
+\textit{IEEE Transactions on Knowledge and Data Engineering}, vol. 16, no. 9, pp. 1128--1142, 2004.
 
 \bibitem{vanderaalst2005}
 W.M.P. van der Aalst, H.A. Reijers, and M. Song,
