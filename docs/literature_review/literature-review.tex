@@ -8,9 +8,9 @@
 
 \doublespacing
 
-\title{}
-\author{}
-\date{}
+\title{Literature Review}
+\author{Garrett Gruss}
+\date{\today}
 
 \begin{document}
 
@@ -18,84 +18,50 @@
 
 \section{Social Network Mining from Event Logs}
 
-Van der Aalst, Reijers, and Song~\cite{vanderaalst2005} present a foundational approach for discovering social networks from event logs. This work presents a collection of algorithms to extract system relationships by analyzing performer information in event logs, augmenting the control-flow graphs produced from traditional process-mining. The authors define four categories of metrics for constructing sociograms.
+Van der Aalst, Reijers, and Song~\cite{vanderaalst2005} present a foundational approach for discovering social networks from event logs. This work presents a collection of algorithms to extract system relationships by analyzing performer information in event logs, augmenting the control-flow graphs produced from traditional process-mining.
 
 \begin{figure}
   \includegraphics[width=\linewidth]{images/social-network.png}
   \caption{An Example Social Network \cite{vanderaalst2005}}
 \end{figure}
 
-\textbf{Metrics based on causality} track how work flows between performers. The \textit{handover of work} metric measures how often one performer's activity is directly followed by another's for the same case. The \textit{subcontracting} metric identifies when work is delegated and returned. \textbf{Metrics based on joint cases} measure how frequently two individuals perform activities for the same process instance, indicating collaborative relationships. \textbf{Metrics based on joint activities} compare performer ``profiles'' based on which activities they execute, using distance measures like Hamming distance and Pearson's correlation coefficient to identify similar roles. \textbf{Metrics based on special event types} analyze events like reassignment or delegation to reveal hierarchical relationships.
-
-\section{Event Detection from Time Series Data}
-
-Guralnik and Srivastava~\cite{guralnik1999} presents an approach to detect events from raw sensor telemetry. This work focuses on determining when significant behavioral changes occur in a system using two key methodologies. \textbf{Unknown number of change-points}: Rather than requiring the number of change-points to be specified a priori, the algorithm iteratively discovers them using a likelihood-based stopping criterion. \textbf{Flexible model selection}: Instead of assuming a fixed functional form between change-points, the approach uses universal approximation theory with basis functions (e.g., polynomials) and selects the best model via cross-validation.
-
-The core algorithm uses maximum likelihood estimation (MLE) to evaluate candidate change-points. For a time series $y(t)$, the method fits piecewise models $f_i(t, \mathbf{w}_i)$ to segments and minimizes the likelihood criterion $\mathcal{L} = \sum_{i=1}^{k} m_i \log \sigma_i^2$ for heteroscedastic errors. A hierarchical splitting procedure examines each segment to determine if partitioning improves the overall likelihood significantly.
-
-Two algorithm variants are presented:
-\begin{itemize}
-    \item \textbf{Batch algorithm}: Processes complete datasets, achieving global optimization. Uses a stability threshold $s$ to stop when likelihood improvements become negligible.
-    \item \textbf{Incremental algorithm}: Detects change-points in real-time as data arrives, useful for online monitoring applications like highway traffic control. Uses a likelihood increase threshold $\delta$ to confirm detected changes.
-\end{itemize}
-
-\section{Fault Diagnosis Using Digraph-Based Fault Trees}
-
-James, Gandhi, and Deshmukh~\cite{james2017} demonstrate the usage of a digraph-based fault tree for analysis of automobile systems. The researchers break the automobile system down into a hierarchical structure of subsystems, assemblies, and components. The researchers map the critical parameters of Pressure (P), Mass flow rate (M), and Temperature (T) to each system component as input and output streams. An \textit{interrelationship table} is constructed to quantify how input paramters affect output paramters using a gain value. The individual component digraphs are then combined into a complete system digraph.
-
-The methodology identifies events at multiple levels. \textbf{Top events} represent observable failure symptoms (loss of power, inefficient operation, hard steering, steering wheel vibration, and noise for the hydraulic system). \textbf{Intermediate events} capture parameter deviations propagating through the system, such as elevated oil temperature. \textbf{Basic events} terminate each fault tree branch and include component failures (vane pump failure, steering cylinder leakage, filter clogged), sub-failures (cavitation erosion, vane tip damage, seal failure), and maintenance-related causes (lack of maintenance, corrosion).
-
-\section{PM4Py: A Process Mining Library for Python}
-
-Berti, van Zelst, and van der Aalst~\cite{berti2019} introduced PM4Py, an open-source Python library designed to bridge the gap between process mining and data science. The library addresses three central disciplines: \textbf{Process discovery}: Automatically constructing process models from event logs using algorithms such as the alpha miner, inductive mining, heuristics miner, ILP miner, and correlation miner. \textbf{Conformance checking}: Comparing observed behavior against modeled behavior using techniques including footprints, token-based replay, alignments, and log skeleton methods. \textbf{Process enhancement}: Improving existing models based on observed data, including performance analysis and decision mining.
-
-PM4Py supports multiple standard data formats for interoperability: the XES format for traditional event logs, OCEL for object-centric event logs, PNML for Petri nets, PTML for process trees, and BPMN 2.0 for business process models. The library provides diverse visualizations including directly-follows graphs (DFGs), process trees, accepting Petri nets, and BPMN diagrams, as well as analytical views such as dotted charts and performance spectra for temporal pattern detection.
-
-Beyond process-focused analysis, PM4Py supports organizational mining through social network analysis (handover of work, working together, subcontracting metrics), role discovery, and resource profiling---connecting directly to the sociogram extraction work of van der Aalst et al.~\cite{vanderaalst2005}.
+The authors define four categories of metrics for constructing sociograms. \textbf{Metrics based on causality} track how work flows between performers. The \textit{handover of work} metric measures how often one performer's activity is directly followed by another's for the same case. The \textit{subcontracting} metric identifies when work is delegated and returned. \textbf{Metrics based on joint cases} measure how frequently two individuals perform activities for the same process instance, indicating collaborative relationships. \textbf{Metrics based on joint activities} compare performer ``profiles'' based on which activities they execute, using distance measures like Hamming distance and Pearson's correlation coefficient to identify similar roles. \textbf{Metrics based on special event types} analyze events like reassignment or delegation to reveal hierarchical relationships.
 
 \section{Workflow Mining: The \texorpdfstring{$\alpha$}{Alpha}-Algorithm}
 
-Van der Aalst, Weijters, and Maruster~\cite{vanderaalst2004} present a foundational algorithm for discovering process models from event logs. The work addresses the \textit{rediscovery problem}: given a workflow log containing sequences of tasks executed for each case, can we reconstruct the underlying process model? The authors represent discovered processes as Petri nets, specifically \textit{Workflow nets} (WF-nets) with designated source and sink places.
+Van der Aalst, Weijters, and Maruster~\cite{vanderaalst2004} present the $\alpha$-algorithm for discovering process models from event logs. The $\alpha$-algorithm constructs a process diagram by: (1) identifying all events from the log, (2) finding start and end events, (3) discovering transitions amongst events, and (4) merging to distinguish AND-splits/joins from OR-splits/joins. The $\alpha$-algorithm can discover any process given it is free-choice (no mixing of choice and synchronization), contains no implicit places, and contains no loops of length one or two.
 
-The approach relies on four \textbf{log-based ordering relations} derived from observed task sequences. The \textit{direct follows} relation ($a >_W b$) indicates task $b$ immediately followed task $a$ in some trace. The \textit{causal} relation ($a \rightarrow_W b$) holds when $a >_W b$ but not $b >_W a$, suggesting a dependency. The \textit{parallel} relation ($a \|_W b$) holds when tasks appear in both orders, indicating concurrent execution. The \textit{never follow} relation ($a \#_W b$) captures tasks that never directly succeed each other.
+\section{PM4Py: A Process Mining Library for Python}
 
-The $\alpha$-algorithm constructs a WF-net by: (1) identifying all tasks from the log, (2) finding initial and final tasks, (3) discovering causal relationships to create places connecting causally related tasks, and (4) merging places appropriately to distinguish AND-splits/joins from OR-splits/joins based on the $\#_W$ relation.
+Berti, van Zelst, and van der Aalst~\cite{berti2019} introduce PM4Py, an open-source Python library implementing the process mining algorithms. The library contains functionality for \textbf{process discovery} using the alpha miner, inductive miner, heuristics miner, ILP miner, and correlation miner. Functionality for \textbf{conformance checking} is implemented with footprints, token-based replay, alignments, and log skeleton methods. 
 
-The authors prove that the $\alpha$-algorithm can \textit{rediscover} any process belonging to the class of \textbf{Structured Workflow nets (SWF-nets)}---sound WF-nets that are free-choice (no mixing of choice and synchronization) and contain no implicit places---provided the log is complete and the process contains no \textbf{short loops} (loops of length one or two). Short loops confound the algorithm because they make the causal relation symmetric, obscuring the underlying structure.
+The PM4Py library supports the XES format for traditional event logs, OCEL for object-centric event logs, PNML for Petri nets, PTML for process trees, BPMN 2.0 for busines porcess models. The library supports diagram generation of directly-follows graphs (DFGs), Petri nets, BPMN diagrams, and temporal pattern charts.
 
-The work acknowledges limitations: the algorithm cannot detect hidden (invisible) tasks, cannot distinguish duplicate tasks with identical labels, and requires a notion of log completeness where all directly-follows relationships have been observed. The authors validated their approach on real-world data from healthcare (patient flow analysis) and judicial processes (processing of 130,136 fine cases).
+\section{Event Detection from Time Series Data}
+
+Guralnik and Srivastava~\cite{guralnik1999} presents an approach to detect events from raw sensor telemetry. Their work focuses on determining when significant system changes occur using two key methodologies. The \textbf{unknown number of change-points} methodology iteratively discovers events using a likelihood-based stopping criterion. The \textbf{flexible model selection} approach uses universal approximation theory with basis functions (e.g., polynomials) and selects the best model via cross-validation.
+
+The authors utilize two core algorithms to detect events. The \textbf{batch algorithm} processes complete datasets, achieving global optimization. Uses a stability threshold $s$ to stop when likelihood improvements become negligible.The \textbf{incremental algorithm} Detects change-points in real-time as data arrives, useful for online monitoring applications like highway traffic control. Uses a likelihood increase threshold $\delta$ to confirm detected changes.
+
+\section{Fault Diagnosis Using Digraph-Based Fault Trees}
+
+James, Gandhi, and Deshmukh~\cite{james2017} demonstrate the usage of a digraph-based fault tree for analysis of automobile systems. The authors break the automobile system down into a hierarchy of subsystems, assemblies, and components. The authors map critical parameters of Pressure (P), Mass flow rate (M), and Temperature (T) to each system component as input and output streams. An \textit{interrelationship table} is constructed to quantify how input paramters affect output paramters using a gain value. The individual component digraphs are then combined into a complete system digraph.
+
+The methodology identifies events at multiple levels. \textbf{Top events} represent observable failure symptoms (loss of power, inefficient operation, hard steering, steering wheel vibration, and noise for the hydraulic system). \textbf{Intermediate events} capture parameter deviations propagating through the system, such as elevated oil temperature. \textbf{Basic events} terminate each fault tree branch and include component failures (vane pump failure, steering cylinder leakage, filter clogged), sub-failures (cavitation erosion, vane tip damage, seal failure), and maintenance-related causes (lack of maintenance, corrosion).
 
 \section{In-Vehicle Telematics for Driving Behavior Monitoring}
 
-Boylan, Meyer, and Chen~\cite{boylan2024} present a systematic review of 45 studies examining how in-vehicle telematics data has been used to monitor and model driving behaviors. The most commonly analyzed telematics variables were speed, acceleration, braking, distance/driving time, and turning/cornering.
+Boylan, Meyer, and Chen~\cite{boylan2024} present a review of 45 studies examining how in-vehicle telematics data has been used to monitor and model driving behaviors. The most commonly analyzed telematics variables were speed, acceleration, braking, distance/driving time, and turning/cornering. 
 
 Machine learning dominated the analysis approaches (22 studies), particularly for insurance applications. Neural networks, random forests, support vector machines, and XGBoost were used to create predictive models for crash risk and driver classification. For claim frequency prediction, Poisson regression models enhanced with neural network-derived risk scores significantly outperformed classical insurance models. Logistic regression, while slightly less accurate than complex machine learning models, was recommended for crash risk prediction due to its interpretability.
 
 \section{Fault Tree Analysis for Automotive Reliability and Safety}
 
-Lambert~\cite{lambert2004} presents the application of fault tree analysis (FTA) to automotive systems, advocating for its adoption alongside the failure modes and effects analysis (FMEA) traditionally used in the automotive industry. While FMEA is an \textit{inductive} technique asking ``what if?'' to determine the effects of component failures, FTA is a \textit{deductive} technique asking ``how can something occur?'' by working backward from an undesired top event to identify all possible causes.
+Lambert~\cite{lambert2004} presents the application of fault tree analysis (FTA) to automotive systems, arguing FTA can show logical system progression and component interactions that traditional FMEA does not address. A fault tree is a graphical and logical representation of event combinations using standard AND and OR gates. Basic events at the bottom of the tree represent the limit of resolution (component failures, human errors, software failures, and environmental conditions).
 
-FTA originated in the aerospace industry in the 1960s for analyzing ballistic missile systems and has since become essential for probabilistic risk assessment in nuclear power and chemical processing. A fault tree is a graphical and logical representation of event combinations using standard AND and OR gates. Basic events at the bottom of the tree represent the limit of resolution: component failures, human errors, software failures, and environmental conditions.
+The paper distinguishes two types of fault events. A \textbf{Type I} fault occurs when a system element fails to perform an intended function (e.g., ``air bag fails to deploy when collision occurs''). A \textbf{Type II} fault occurs when a system element performs an inadvertent function (e.g., ``inadvertent deployment of air bag'').
 
-The paper distinguishes two types of fault events:
-\begin{itemize}
-    \item \textbf{Type I}: A system element fails to perform an intended function (e.g., ``air bag fails to deploy when collision occurs'')
-    \item \textbf{Type II}: A system element performs an inadvertent function (e.g., ``inadvertent deployment of air bag'')
-\end{itemize}
-
-The FTA methodology follows a structured sequence:
-\begin{enumerate}
-    \item Define the undesired event (top event)
-    \item Acquire system understanding through diagrams and flow sheets
-    \item Establish scope, bounds, and environmental conditions
-    \item List assumptions
-    \item Construct the fault tree using logic gates
-    \item Perform qualitative analysis: identify single-point failures, common-cause failures, and minimal cut sets
-    \item Perform quantitative analysis: calculate top event probability, importance measures, and uncertainty
-    \item Conduct tradeoff studies and document results
-\end{enumerate}
-
-Lambert emphasizes that FTA's value lies in showing logical progressions and system interactions not displayed in traditional FMEA, while FMEA can identify candidate undesired events for FTA. With increasing automotive electronics in engine control, cruise control, and braking systems, FTA is particularly well-suited to address complex failure mode interactions---complementing the digraph-based approach described by James et al.~\cite{james2017}.
+The FTA methodology is as follows: (1) Define the undesired event (top event).(2) Acquire system understanding through diagrams and flow sheets.(3) Establish scope, bounds, and environmental conditions.(4) List assumptions.(5) Construct the fault tree using logic gates.(6) Perform qualitative analysis: identify single-point failures, common-cause failures, and minimal cut sets.(7) Perform quantitative analysis: calculate top event probability, importance measures, and uncertainty.(8) Conduct tradeoff studies and document results.
 
 \section{The SHIP Safety Case Approach}
 
