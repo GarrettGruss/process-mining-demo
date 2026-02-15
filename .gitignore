@@ -24,3 +24,6 @@ examples/example_4/data/
 *.fdb_latexmk
 *.fls
 *.gz
+*.nav
+*.snm
+*.toc
