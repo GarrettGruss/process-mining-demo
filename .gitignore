@@ -11,3 +11,19 @@ wheels/
 
 # environment
 .env
+*.pem
+
+# data
+examples/example_4/data/
+
+# tex
+*.dvi
+*.log
+*.out
+*.aux
+*.fdb_latexmk
+*.fls
+*.gz
+*.nav
+*.snm
+*.toc
