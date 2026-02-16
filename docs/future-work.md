@@ -2,9 +2,17 @@
 
 ## Threshold methods to identify system events
 
+## Event classification using the SHIP safety model
+
+Extend the event classifier to label detected events as safety-state transitions from the Bishop & Bloomfield (1995) fault-error-failure model. Each change point produced by the detection pipeline is currently just "the signal changed here" — the SHIP model provides a classification scheme that gives each event a safety-relevant label. A shift from nominal operating range to deviation is an error activation (OK → Erroneous), a self-correction back to nominal is error recovery (Erroneous → OK), entry into a degraded-but-safe mode is a fail-safe trip (Erroneous → Safe), and escalation beyond safety thresholds is a dangerous failure (Erroneous → Dangerous). The classifier uses the piecewise model fit before and after each change point to characterize the nature of the transition, with domain knowledge mapping model-change signatures to state transitions. Once classified, these events enable direct estimation of transition probabilities from the event log — error activation rates, containment effectiveness, and reliability growth trends — feeding quantitative evidence into safety cases.
+
 ## Social Network Analysis (SNA) of system events
 
 Reinterpret van der Aalst's SNA metrics in the context of system failure propagation, where subsystems are the performers and failure cases are the process instances. Handover-of-work metrics quantify how one subsystem's failure triggers another's. Subcontracting patterns (A → B → A) reveal feedback loops in failure chains. The working-together metric identifies common-cause failures — subsystems that frequently appear in the same failure cases likely share a vulnerability. Performer-by-activity similarity (via Hamming or Pearson distance on transition profiles) finds subsystems with shared failure patterns even without direct interaction. The result is a weighted, directed sociogram of subsystem relationships during failures that can also validate safety case independence assumptions — strong causal coupling between supposedly independent subsystems indicates a gap in the defence-in-depth argument.
+
+## SHIP-classified SNA for failure propagation analysis
+
+Combine SHIP safety-state classification with SNA by mapping subsystems to performers, SHIP transition types to activities, and failure instances to cases. This enables SNA metrics to answer safety-specific questions: handover-of-work filtered to error activation events reveals which subsystems propagate dangerous failures to each other, while handover filtered to recovery events shows which subsystems support each other's self-healing. Subcontracting patterns between SHIP-classified events identify feedback loops where two subsystems amplify each other's failures. The working-together metric applied to failure cases challenges safety case independence assumptions — frequent co-occurrence of two subsystems in the same failure cases suggests common-cause vulnerability. Filtering the sociogram by SHIP transition type produces different networks for different safety questions, making the analysis more targeted than unclassified SNA.
 
 ## Wavelet transform to identify system events
 
