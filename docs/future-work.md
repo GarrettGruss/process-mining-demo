@@ -1,74 +1,25 @@
 # Future Work
 
+## Threshold methods to identify system events
+
+## Social Network Analysis (SNA) of system events
+
+Reinterpret van der Aalst's SNA metrics in the context of system failure propagation, where subsystems are the performers and failure cases are the process instances. Handover-of-work metrics quantify how one subsystem's failure triggers another's. Subcontracting patterns (A → B → A) reveal feedback loops in failure chains. The working-together metric identifies common-cause failures — subsystems that frequently appear in the same failure cases likely share a vulnerability. Performer-by-activity similarity (via Hamming or Pearson distance on transition profiles) finds subsystems with shared failure patterns even without direct interaction. The result is a weighted, directed sociogram of subsystem relationships during failures that can also validate safety case independence assumptions — strong causal coupling between supposedly independent subsystems indicates a gap in the defence-in-depth argument.
+
+## Wavelet transform to identify system events
+
+### Denoising as preprocessing
+
+Apply wavelet denoising to clean raw sensor channels before running existing threshold or extrema-based event detectors. Decompose the signal with `pywt.wavedec()`, threshold small coefficients (noise) with `pywt.threshold()`, and reconstruct with `pywt.waverec()`. This reduces false positives from noise and false negatives from overly conservative thresholds, making existing detection methods more robust without changing their logic.
+
+### Multi-scale change-point detection
+
+Use wavelet coefficients as an alternative event detection strategy that identifies events based on structural signal changes rather than fixed value thresholds. The Stationary Wavelet Transform (`pywt.swt()`) is the best fit because it is shift-invariant — detected event timestamps do not depend on signal alignment, which matters for the `CaseGenerator` time-window approach. Large coefficients at coarse scales correspond to major state transitions (e.g. throttle on/off, gear shifts), while large coefficients at fine scales correspond to sharp transients (e.g. bumpstop hits, wheel lockups). Different wavelet bases suit different signal types: Haar or db2 for sharp mechanical events, Morlet for oscillating signals, and db4–db6 for general telemetry channels.
+
+## Change-point detection via Ruptures
+
+Use the `ruptures` library to detect points where the statistical properties of a denoised signal change, replacing manual threshold selection with a single penalty parameter. Each detected change point becomes a system event with a timestamp and activity label derived from the sensor and nature of the change. The `Pelt` search method runs in linear time and is a good default. The cost model determines what kind of change is detected: `"l2"` for mean shifts (throttle position, gear state), `"rbf"` for general distributional changes including variance (vibration, noise characteristics), and `"clinear"` for slope changes (temperature drift, pressure trends). The penalty parameter controls sensitivity — higher values yield fewer, more significant events — and can be set using the Guralnik & Srivastava cross-validation approach rather than manual tuning.
+
 ## Wavelet basis selection via event detection feedback
 
-One of the open challenges in wavelet analysis is that there is no principled method for choosing the best wavelet basis for a given signal (Guo et al., 2022). Currently this is done by domain expertise or trial-and-error. The event detection pipeline offers a potential feedback mechanism to automate this.
-
-### Idea
-
-Use change-point detection quality as an objective function for wavelet basis selection. The pipeline would be:
-
-1. For each candidate wavelet basis (e.g. Haar, db4, db8, sym5, coif3, etc.):
-   - Decompose the signal using that wavelet (via `pywt.swt()` or `pywt.wavedec()`)
-   - Optionally denoise by thresholding small coefficients
-   - Run change-point detection (e.g. via Ruptures) on the wavelet coefficients or on the denoised/reconstructed signal
-   - Evaluate the quality of the detected change points
-2. Select the wavelet basis that produces the best change-point detection results.
-
-### Connection to Guralnik & Srivastava (1999)
-
-The event detection algorithm from Guralnik & Srivastava provides two direct mechanisms for this:
-
-**Approach 1: Wavelets as the basis class.** The paper explicitly states that their approach works with *any* basis class, listing "radial, wavelet, Fourier, etc." as alternatives to the polynomials used in their experiments (Section 2.3). Instead of fitting polynomials (1, t, t², t³) to each segment, wavelet basis functions could be used directly. The model selection via leave-one-out cross-validation would then automatically choose the best wavelet representation for each segment. Different segments could even use different wavelet bases — one segment might be best described by a Haar basis (sharp transition), another by Daubechies (smoother behavior).
-
-**Approach 2: Likelihood criteria as the wavelet selection objective.** The batch algorithm's likelihood criteria and stopping criterion provide a principled, unsupervised scoring function. For each candidate wavelet: denoise the signal → run change-point detection → compute the total likelihood of the resulting segmented model. The wavelet that produces the lowest likelihood criteria wins.
-
-The cross-validation approach is especially valuable here because it avoids overfitting — you don't need ground truth change points to evaluate which wavelet is better.
-
-### Quality metrics to optimize
-
-- **Likelihood criteria** from the Guralnik & Srivastava batch algorithm — lower is better, meaning the piecewise model fits the segments well
-- **Cross-validation risk** from the Guralnik model selection step — directly measures how well the wavelet basis generalizes to unseen data points within each segment
-- **Stability of detected change points** across multiple wavelet scales — if the same change point appears at coarse and fine scales, it's more likely to be real
-- **Consistency with known ground truth** if available (e.g. in a supervised calibration phase)
-- **Parsimony** — fewer change points with equivalent likelihood suggests a better denoising/decomposition that removes spurious transitions
-
-### Why this could work
-
-- Different wavelets have different trade-offs (vanishing moments, support length, regularity) that affect how well they capture the signal's characteristics
-- A wavelet that matches the signal's structure will produce sparser coefficients with clearer separation between signal and noise
-- Cleaner separation → better denoising → fewer spurious change points → more reliable events for process mining
-- The Guralnik algorithm already solves the model selection problem for arbitrary basis classes — extending it to wavelet bases is a natural generalization, not a new algorithm
-- This turns the "no principled basis selection method" research gap into an optimization problem with a concrete objective function
-
-### Implementation sketch
-
-```
-import pywt
-import ruptures as rpt
-
-def evaluate_wavelet(signal, wavelet_name, n_levels=4):
-    """Score a wavelet basis by change-point detection quality."""
-    # Decompose
-    coeffs = pywt.swt(signal, wavelet_name, level=n_levels)
-
-    # Denoise via thresholding
-    denoised = wavelet_denoise(signal, wavelet_name, n_levels)
-
-    # Detect change points
-    algo = rpt.Pelt(model="rbf").fit(denoised)
-    change_points = algo.predict(pen=penalty)
-
-    # Score: e.g. likelihood of the segmented model
-    return score_segmentation(denoised, change_points)
-
-candidates = pywt.wavelist(kind='discrete')
-scores = {w: evaluate_wavelet(signal, w) for w in candidates}
-best_wavelet = min(scores, key=scores.get)
-```
-
-### Open questions
-
-- How sensitive is the optimal wavelet choice to the specific signal or domain? Is the best wavelet consistent across signals from the same sensor/process, or does it need per-signal selection?
-- Should the wavelet selection optimize for the raw change-point detection, or for downstream process mining quality (e.g. do the resulting event logs produce meaningful social networks)?
-- Can this be extended to learn custom wavelet filter banks (via `pywt.Wavelet` with custom filters) rather than just selecting from predefined families?
+There is no principled method for choosing the best wavelet basis for a given signal (Guo et al., 2022). The event detection pipeline offers a potential feedback mechanism: for each candidate wavelet basis, decompose and denoise the signal, run change-point detection, and score the result using a quality metric such as the likelihood criteria or cross-validation risk from Guralnik & Srivastava (1999). The wavelet that produces the best-scoring segmentation wins. This is a natural extension of Guralnik & Srivastava's framework, which explicitly supports arbitrary basis classes including wavelets, and whose leave-one-out cross-validation avoids overfitting without requiring ground truth change points.
