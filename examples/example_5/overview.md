@@ -48,6 +48,7 @@ classDiagram
         +detect_state_change_events(column, event_name_prefix, ignore_nan) pd.DataFrame
         +detect_combined_condition_events(conditions, event_name, mode) pd.DataFrame
         +detect_local_extrema_events(column, event_name_max, event_name_min, window_size, prominence) pd.DataFrame
+        +detect_change_points(column, event_name, model, penalty, min_size) pd.DataFrame
     }
 ```
 
@@ -93,7 +94,7 @@ Apply wavelet denoising to clean raw sensor channels before event detection. Dec
 
 ### Step 2: EventClassifier
 
-Stateless detection methods for extracting discrete events from a DataFrame column. Provides threshold detection, state change detection, combined conditions, and local extrema detection. These methods are the building blocks — they are called by the `SHIPEventClassifier` but have no knowledge of SHIP or subsystems. Refer to `examples/example_4/event_extractor.py` for the existing implementation.
+Stateless detection methods for extracting discrete events from a DataFrame column. Provides threshold detection, state change detection, combined conditions, and local extrema detection. As a stretch goal, a `detect_change_points()` method wraps the `ruptures` library (`Pelt` search with configurable cost model and penalty) to detect structural signal changes without manual thresholds. These methods are the building blocks — they are called by the `SHIPEventClassifier` but have no knowledge of SHIP or subsystems. Refer to `examples/example_4/event_extractor.py` for the existing implementation.
 
 ### Step 3: SHIPEventClassifier
 
