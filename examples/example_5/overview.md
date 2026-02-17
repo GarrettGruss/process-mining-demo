@@ -68,6 +68,7 @@ classDiagram
         -List~Callable~ error_recovery
         -List~Callable~ failsafe_trip
         -List~Callable~ dangerous_failure
+        -List~Callable~ operational
     }
 
     SHIPEventClassifier --> "*" Subsystem
@@ -96,7 +97,7 @@ Stateless detection methods for extracting discrete events from a DataFrame colu
 
 ### Step 3: SHIPEventClassifier
 
-Models the system as a collection of `Subsystem` objects. Each `Subsystem` has a name and four lists of callables — one per SHIP transition type (`error_activation`, `error_recovery`, `failsafe_trip`, `dangerous_failure`). Each callable is a bound `EventClassifier` method (e.g. `lambda ec: ec.detect_threshold_events("coolant_temp", 100, ">", "coolant_high")`). The `classify_events()` method iterates over subsystems, calls each detection function, and tags the resulting events with the subsystem name and transition type.
+Models the system as a collection of `Subsystem` objects. Each `Subsystem` has a name, four lists of callables for SHIP transition types (`error_activation`, `error_recovery`, `failsafe_trip`, `dangerous_failure`), and an `operational` list for normal operation events (e.g. gear shifts, braking events, lap crossings). Each callable is a bound `EventClassifier` method (e.g. `lambda ec: ec.detect_threshold_events("coolant_temp", 100, ">", "coolant_high")`). The `classify_events()` method iterates over subsystems, calls each detection function, and tags the resulting events with the subsystem name and transition type. Operational events are tagged with `transition_type="operational"` — they flow through the pipeline for DFG context and as `CaseGenerator` triggers but are excluded from SNA failure propagation analysis.
 
 Output DataFrame columns: `timestamp`, `activity`, `subsystem`, `transition_type`, `value`.
 
@@ -125,11 +126,70 @@ Time-window method that takes an event of interest (EoI) and constructs a trace 
 | **GPS** | `gps.speed_mph`, `gps.nsat_#`, `gps.latacc_g`, `gps.lonacc_g`, `gps.slope_deg`, `gps.heading_deg`, `gps.gyro_deg/s`, `gps.altitude_m`, `gps.posaccuracy_m`, `gps.latitude_°`, `gps.longitude_°`, `gps.elevation_cm` |
 | **Datalogger** | `datalogger.tem_°f`, `aim.time_s`, `cycle time_ms`, `aim.distancemeters_m` |
 
+## SHIP Event Mapping
+
+### Suspension
+
+| Transition | Event | Detection |
+|---|---|---|
+| error_activation | Bumpstop hit | `*.bumpstop_unit` crosses threshold |
+| error_activation | Bottoming event | Shock position exceeds travel limit |
+| error_activation | Roll event | Roll angle/gradient exceeds threshold |
+
+### Brakes
+
+| Transition | Event | Detection |
+|---|---|---|
+| error_activation | Wheel lockup | Wheel speed drops to zero while vehicle speed > 0 (combined condition) |
+
+### Engine
+
+| Transition | Event | Detection |
+|---|---|---|
+| error_activation | Engine overheating | `f88.ect1_°f` exceeds threshold |
+| error_activation | Lugging | Low RPM + high throttle (combined condition) |
+| error_recovery | Cooling recovery | `f88.ect1_°f` returns below threshold |
+
+### Lubrication
+
+| Transition | Event | Detection |
+|---|---|---|
+| error_activation | Low oil pressure | `f88.oil.p1_psi` drops below threshold |
+| error_activation | Oil pressure spike | `f88.oil.p1_psi` exceeds upper threshold |
+
+### Electrical
+
+| Transition | Event | Detection |
+|---|---|---|
+| error_activation | Low battery voltage | `battery_v` or `f88.v batt_v` drops below threshold |
+| error_activation | GPS lock lost | `gps.nsat_#` drops below minimum |
+| error_recovery | GPS lock regained | `gps.nsat_#` returns above minimum |
+
+### Drivetrain
+
+| Transition | Event | Detection |
+|---|---|---|
+| error_activation | Wrong gear | RPM/speed ratio outside expected range for current gear (combined condition) |
+| error_activation | Shift under load | Gear change while throttle > threshold (combined condition + state change) |
+
+### Operational events (not SHIP-classified)
+
+These events describe normal operation or session context. They are useful as trigger events for the `CaseGenerator` but do not represent safety-state transitions.
+
+- **Lap**: lap started, lap completed, sector crossing
+- **Driver performance**: braking event, cornering event, throttle event
+- **Gear shifts**: upshift, downshift
+- **Engine**: launch
+- **Calibration**: calibration switch change, map change
+- **Track position**: straight section, technical section, elevation change
+- **Session**: fastest sector, lap consistency
+
 ## Risks
 
-### Critical
+### Implementation
 
-- **SHIP transition callables are undefined.** Subsystems and their channels are defined, but the specific `EventClassifier` callables for each transition type (error activation, recovery, failsafe trip, dangerous failure) have not been specified per subsystem. Without these, the `SHIPEventClassifier` cannot be instantiated.
+- **Threshold calibration required.** Subsystems, events, and detection methods are defined, but specific threshold values and detection parameters need to be determined from the data (e.g. what oil pressure constitutes "low," what bumpstop value constitutes a "hit"). This is implementation work, not a design gap.
+- **Not all SHIP transitions are populated.** Error recovery, failsafe trip, and dangerous failure callables are sparse — most subsystems only have error activation rules. Recovery events require defining "return to nominal" thresholds, and failsafe/dangerous failure events may not be observable in this dataset if no actual failures occurred during the endurance run.
 
 ### Future work
 
