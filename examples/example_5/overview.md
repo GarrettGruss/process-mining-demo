@@ -6,7 +6,7 @@ This project will take the FSAE data, apply a wavelet denoising function across 
 
 ```mermaid
 flowchart LR
-    A[Raw Telemetry] --> B[WaveletDenoiser]
+    A[Raw Telemetry] --> B[WaveletDenoiser]:::stretch
     B --> C[SHIPEventClassifier]
     C -.uses.-> C2[EventClassifier]
     C --> D[CaseGenerator]
@@ -14,8 +14,12 @@ flowchart LR
 
     E --> E1[DFG]
     E --> E2[Variant Analysis]
-    E --> E3[SNA Sociogram]
+    E --> E3[SNA Sociogram]:::stretch
+
+    classDef stretch fill:#f9a825,stroke:#f57f17,color:#000
 ```
+
+**Legend**: Yellow nodes are stretch goals. Base pipeline runs without them — raw telemetry feeds directly into `SHIPEventClassifier` (no denoising), and analysis covers DFG and Variant Analysis (no SNA).
 
 ## Class Diagrams
 
@@ -82,7 +86,7 @@ classDiagram
 
 ## Implementation
 
-### Step 1: WaveletDenoiser
+### Step 1: WaveletDenoiser (stretch goal)
 
 Apply wavelet denoising to clean raw sensor channels before event detection. Decompose each channel with `pywt.wavedec()`, threshold small coefficients with `pywt.threshold()`, and reconstruct with `pywt.waverec()`. Returns a cleaned DataFrame with the same shape as the input.
 
@@ -104,16 +108,32 @@ Time-window method that takes an event of interest (EoI) and constructs a trace 
 
 - **DFG Analysis**: Directly-Follows Graphs showing event ordering, timing, and transition counts. Refer to `examples/example_4/example_4_part_2.ipynb`.
 - **Variant Analysis**: Identify unique event sequences across cases. Refer to `examples/example_4/example_4_part_2.ipynb`.
-- **SNA Sociogram**: Map subsystems to performers, SHIP transition types to activities, and failure instances to cases. Compute handover-of-work (failure propagation), subcontracting (feedback loops), working-together (common-cause failure), and performer-by-activity similarity (shared failure profiles). Filter the sociogram by transition type to answer targeted safety questions.
+- **SNA Sociogram (stretch goal)**: Map subsystems to performers, SHIP transition types to activities, and failure instances to cases. Compute handover-of-work (failure propagation), subcontracting (feedback loops), working-together (common-cause failure), and performer-by-activity similarity (shared failure profiles). Filter the sociogram by transition type to answer targeted safety questions.
+
+## Subsystem Definitions
+
+| Subsystem | Channels |
+|---|---|
+| **Suspension** | `fl/fr/rl/rr.shock_mm`, `*.shock.pos.zero_mm`, `*.shock.speed_mm/s`, `fl.shock.accel_mm/s/s`, `*.bumpstop_unit` |
+| **Brakes** | `front.brake_psi`, `rear.brake_psi` |
+| **Engine** | `f88.rpm_rpm`, `f88.map1_mbar`, `f88.tps1_%`, `f88.lambda1_a/f`, `f88.act1_°f`, `f88.ect1_°f`, `f88.gear_#`, `f88.cal.switch_#`, `f88.baro.pr_mbar` |
+| **Fuel** | `f88.fuel.pr1_psi`, `f88.fuel.t_°f`, `fuel flow_cc/min`, `fuel used_liters`, `injector duty_%` |
+| **Lubrication** | `f88.oil.p1_psi`, `run.oil.pres_psi`, `run.oil.pres.hi_psi`, `load.oil.pres_psi`, `load.oil.pres.hi_psi`, `load.oil.pres.hi2_psi` |
+| **Electrical** | `battery_v`, `f88.v batt_v` |
+| **Vehicle Dynamics** | `acc.lateral_g`, `acc.longitudin_g`, `roll angle_unit`, `fr.roll.gradient_degree`, `re.roll.gradient_degree`, `force_unit`, `kw_unit` |
+| **Drivetrain** | `f88.v.speed_mph`, `f88.d.speed_mph`, `f88.speed.fl/fr/rl/rr_mph` |
+| **GPS** | `gps.speed_mph`, `gps.nsat_#`, `gps.latacc_g`, `gps.lonacc_g`, `gps.slope_deg`, `gps.heading_deg`, `gps.gyro_deg/s`, `gps.altitude_m`, `gps.posaccuracy_m`, `gps.latitude_°`, `gps.longitude_°`, `gps.elevation_cm` |
+| **Datalogger** | `datalogger.tem_°f`, `aim.time_s`, `cycle time_ms`, `aim.distancemeters_m` |
 
 ## Risks
 
 ### Critical
 
-- **Subsystem definitions are undefined.** The pipeline architecture is in place but the actual subsystems for the FSAE dataset — which sensors map to which subsystems, and which callables define each transition type — have not been specified. Without these, the `SHIPEventClassifier` cannot be instantiated.
-- **Wavelet parameters have no selection method.** The `WaveletDenoiser` requires a wavelet basis and decomposition level, but there is no guidance on how to choose them for this dataset. Incorrect parameters could over-denoise (removing real transients) or under-denoise (leaving noise that generates false events), undermining every downstream step.
+- **SHIP transition callables are undefined.** Subsystems and their channels are defined, but the specific `EventClassifier` callables for each transition type (error activation, recovery, failsafe trip, dangerous failure) have not been specified per subsystem. Without these, the `SHIPEventClassifier` cannot be instantiated.
 
 ### Future work
+
+- **Wavelet parameters have no selection method.** The `WaveletDenoiser` requires a wavelet basis and decomposition level, but there is no guidance on how to choose them for this dataset. Incorrect parameters could over-denoise (removing real transients) or under-denoise (leaving noise that generates false events).
 
 - **SHIP classification is manually defined, not detected.** Transition types are encoded as static rules chosen upfront. If a transition is misclassified (e.g. normal variance labeled as error activation), all downstream analysis inherits that error. A validation step or feedback mechanism could address this.
 - **Time-window sizing is unresolved.** The `CaseGenerator` window parameters directly determine which events appear in each case. Too small and propagation chains are missed; too large and unrelated events appear causally linked. Sensitivity analysis across window sizes would mitigate this.
