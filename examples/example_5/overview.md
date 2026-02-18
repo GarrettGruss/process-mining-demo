@@ -8,9 +8,9 @@ This project will take the FSAE data, classify events using a config-driven disp
 flowchart LR
     A[Raw Telemetry] --> B[WaveletDenoiser]:::stretch
     B --denoised df--> C[SHIP Dispatcher]
-    B --energy change events--> D
     C -.reads.-> C2[SHIP Config]
     C -.calls.-> C3[EventClassifier]
+    C -.calls.-> B
     C --> D[CaseGenerator]
     D --> E[Analysis]
 
@@ -45,19 +45,23 @@ classDiagram
 
 A flat list of event definitions. Each entry maps a detection method call to a subsystem and SHIP transition type. No class hierarchy — adding or changing events is a config edit.
 
+Events that have both activation and recovery use `detect_state_change_events` on a derived boolean column. The dispatcher pre-computes the boolean (e.g. `df["f88.ect1_°f"] > 220`), injects it as a temporary column, and runs state-change detection against it. The dispatcher constructs the `False->True` / `True->False` activity keys programmatically from the `event_name_prefix` in `args` — the config author never writes these strings by hand. The resulting transitions are mapped to `error_activation` and `error_recovery` automatically. Events with only a single transition (e.g. one-shot threshold crossings, combined conditions) use the simpler `transition_type` field.
+
 ```python
 SHIP_EVENTS = [
+    # State-change pattern: one detection, two SHIP transitions.
+    # The dispatcher builds the transition mapping from event_name_prefix —
+    # "{prefix} False->True" → error_activation,
+    # "{prefix} True->False" → error_recovery.
     {
         "subsystem": "Engine",
-        "transition_type": "error_activation",
-        "method": "detect_threshold_events",
+        "method": "detect_state_change_events",
+        "derived_column": ("f88.ect1_°f", ">", 220),
         "args": {
-            "column": "f88.ect1_°f",
-            "threshold": 220,
-            "condition": ">",
-            "event_name": "engine_overheating",
+            "event_name_prefix": "engine_temp",
         },
     },
+    # Simple pattern: one detection, one SHIP transition
     {
         "subsystem": "Lubrication",
         "transition_type": "error_activation",
@@ -75,17 +79,44 @@ SHIP_EVENTS = [
 
 ### SHIP Dispatcher
 
-A single function that iterates over `SHIP_EVENTS`, calls the corresponding `EventClassifier` method, tags results with `subsystem` and `transition_type`, and concatenates into one event log. Replaces the `SHIPEventClassifier` and `Subsystem` classes.
+A single function that iterates over `SHIP_EVENTS`, calls the corresponding `EventClassifier` method, tags results with `subsystem` and `transition_type`, and concatenates into one event log. Handles two config shapes: entries with `derived_column` (state-change pattern) compute a boolean series and build the transition mapping programmatically from the `event_name_prefix`; entries with `transition_type` (simple pattern) tag all results uniformly.
+
+For derived-column entries, the dispatcher injects the boolean series as a uniquely-named temporary column on a per-entry copy, avoiding mutation of the shared DataFrame and naming collisions between entries. The `EventClassifier` is constructed once from the original DataFrame; derived entries get their own instance. If a `WaveletDenoiser` is provided (stretch goal), the dispatcher routes `detect_energy_change_points` calls to it instead of `EventClassifier`.
 
 ```python
-def dispatch_ship_events(df: pd.DataFrame, config: list[dict]) -> pd.DataFrame:
+def dispatch_ship_events(
+    df: pd.DataFrame, config: list[dict], wd: WaveletDenoiser | None = None,
+) -> pd.DataFrame:
     ec = EventClassifier(df)
     frames = []
     for entry in config:
-        method = getattr(ec, entry["method"])
-        events = method(**entry["args"])
+        if "derived_column" in entry:
+            # Compute boolean series without mutating the shared df
+            col, op, val = entry["derived_column"]
+            ops = {">": gt, "<": lt, ">=": ge, "<=": le, "==": eq}
+            derived = ops[op](df[col], val)
+            # Inject as a temp column on a shallow copy for this entry only
+            entry_df = df.copy(deep=False)
+            temp_col = f"_derived_{entry['args']['event_name_prefix']}"
+            entry_df[temp_col] = derived
+            entry_ec = EventClassifier(entry_df)
+            args = {**entry["args"], "column": temp_col}
+            events = getattr(entry_ec, entry["method"])(**args)
+            # Build transition mapping from the prefix
+            prefix = entry["args"]["event_name_prefix"]
+            tmap = {
+                f"{prefix} False->True": "error_activation",
+                f"{prefix} True->False": "error_recovery",
+            }
+            events["transition_type"] = events["activity"].map(tmap)
+            events = events.dropna(subset=["transition_type"])
+        else:
+            # Route to WaveletDenoiser or EventClassifier based on method name
+            target = wd if wd and hasattr(wd, entry["method"]) else ec
+            events = getattr(target, entry["method"])(**entry["args"])
+            events["transition_type"] = entry["transition_type"]
+
         events["subsystem"] = entry["subsystem"]
-        events["transition_type"] = entry["transition_type"]
         frames.append(events)
     return pd.concat(frames, ignore_index=True).sort_values("timestamp")
 ```
@@ -118,7 +149,23 @@ Handles both signal cleaning and structural change detection using a single wave
 
 **Coefficient energy.** `compute_energy()` computes a windowed energy profile from the wavelet detail coefficients. For each decomposition level, square the detail coefficients and sum them within a sliding window to produce a time-aligned energy series. Spikes in this series indicate regions where the signal's frequency content changes — structural transitions rather than simple threshold crossings.
 
-**Energy-based change detection.** `detect_energy_change_points()` thresholds the energy profile (e.g. energy > mean + `threshold_sigma` * std) and emits events at the rising edges. This replaces the `ruptures`-based `detect_change_points()` approach: same goal (find structural signal changes without manual thresholds), but reuses the wavelet decomposition already computed for denoising and avoids an external dependency. The output DataFrame matches the `EventClassifier` format (`timestamp`, `activity`, `value`) so it can be concatenated directly into the SHIP dispatcher output.
+**Energy-based change detection.** `detect_energy_change_points()` thresholds the energy profile (e.g. energy > mean + `threshold_sigma` * std) and emits events at the rising edges. This replaces the `ruptures`-based `detect_change_points()` approach: same goal (find structural signal changes without manual thresholds), but reuses the wavelet decomposition already computed for denoising and avoids an external dependency. The output DataFrame matches the `EventClassifier` format (`timestamp`, `activity`, `value`).
+
+**Subsystem assignment.** Energy change events are registered in `SHIP_EVENTS` like any other detector — the config entry specifies `subsystem`, `transition_type`, and `method: "detect_energy_change_points"`. The dispatcher calls the method on a `WaveletDenoiser` instance instead of `EventClassifier` when the method name belongs to the denoiser. This keeps subsystem ownership in the config (where all other assignments live) rather than in notebook glue code or a separate channel-to-subsystem lookup.
+
+```python
+# Energy change detection entries in SHIP_EVENTS (stretch goal)
+{
+    "subsystem": "Engine",
+    "transition_type": "error_activation",
+    "method": "detect_energy_change_points",
+    "args": {
+        "column": "f88.ect1_°f",
+        "event_name": "engine_temp_energy_change",
+        "threshold_sigma": 3.0,
+    },
+},
+```
 
 ## Implementation
 
@@ -142,7 +189,7 @@ Reuse `CaseGenerator` from example_4. The dispatcher output already contains `su
 
 - **DFG Analysis**: Directly-Follows Graphs showing event ordering, timing, and transition counts. Refer to `examples/example_4/example_4_part_2.ipynb`.
 - **Variant Analysis**: Identify unique event sequences across cases. Refer to `examples/example_4/example_4_part_2.ipynb`.
-- **WaveletDenoiser (stretch goal)**: If implemented, insert before the dispatcher. The denoised DataFrame replaces the raw telemetry as input to the SHIP dispatcher. Energy-based change point events are concatenated into the dispatcher output (tagged with the relevant subsystem and `transition_type`) before passing to the `CaseGenerator`.
+- **WaveletDenoiser (stretch goal)**: If implemented, the denoised DataFrame replaces the raw telemetry as input to the SHIP dispatcher. Energy-based change point events are registered as `SHIP_EVENTS` config entries (with `subsystem` and `transition_type` like any other event) and dispatched through the same loop — the dispatcher routes `detect_energy_change_points` calls to the `WaveletDenoiser` instance.
 - **SNA Sociogram (stretch goal)**: Map subsystems to performers, SHIP transition types to activities, and failure instances to cases. Compute handover-of-work (failure propagation), subcontracting (feedback loops), working-together (common-cause failure), and performer-by-activity similarity (shared failure profiles). Filter the sociogram by transition type to answer targeted safety questions.
 
 ## Subsystem Definitions
@@ -180,24 +227,27 @@ Reuse `CaseGenerator` from example_4. The dispatcher output already contains `su
 
 | Transition | Event | Detection |
 |---|---|---|
-| error_activation | Engine overheating | `f88.ect1_°f` exceeds threshold |
+| error_activation | Engine overheating | State change on `f88.ect1_°f > threshold` (False→True) |
+| error_recovery | Cooling recovery | State change on `f88.ect1_°f > threshold` (True→False) |
 | error_activation | Lugging | Low RPM + high throttle (combined condition) |
-| error_recovery | Cooling recovery | `f88.ect1_°f` returns below threshold |
 
 ### Lubrication
 
 | Transition | Event | Detection |
 |---|---|---|
-| error_activation | Low oil pressure | `f88.oil.p1_psi` drops below threshold |
-| error_activation | Oil pressure spike | `f88.oil.p1_psi` exceeds upper threshold |
+| error_activation | Low oil pressure | State change on `f88.oil.p1_psi < threshold` (False→True) |
+| error_recovery | Oil pressure recovery | State change on `f88.oil.p1_psi < threshold` (True→False) |
+| error_activation | Oil pressure spike | State change on `f88.oil.p1_psi > upper_threshold` (False→True) |
+| error_recovery | Oil pressure spike recovery | State change on `f88.oil.p1_psi > upper_threshold` (True→False) |
 
 ### Electrical
 
 | Transition | Event | Detection |
 |---|---|---|
-| error_activation | Low battery voltage | `battery_v` or `f88.v batt_v` drops below threshold |
-| error_activation | GPS lock lost | `gps.nsat_#` drops below minimum |
-| error_recovery | GPS lock regained | `gps.nsat_#` returns above minimum |
+| error_activation | Low battery voltage | State change on `battery_v < threshold` (False→True) |
+| error_recovery | Battery voltage recovery | State change on `battery_v < threshold` (True→False) |
+| error_activation | GPS lock lost | State change on `gps.nsat_# < minimum` (False→True) |
+| error_recovery | GPS lock regained | State change on `gps.nsat_# < minimum` (True→False) |
 
 ### Drivetrain
 
@@ -223,7 +273,7 @@ These events describe normal operation or session context. They are useful as tr
 ### Implementation
 
 - **Threshold calibration required.** Events and detection methods are defined, but specific threshold values and detection parameters need to be determined from the data (e.g. what oil pressure constitutes "low," what bumpstop value constitutes a "hit"). This is implementation work, not a design gap.
-- **Not all SHIP transitions are populated.** Error recovery, failsafe trip, and dangerous failure events are sparse — most subsystems only have error activation rules. Recovery events require defining "return to nominal" thresholds, and failsafe/dangerous failure events may not be observable in this dataset if no actual failures occurred during the endurance run.
+- **Not all SHIP transitions are populated.** Failsafe trip and dangerous failure events are empty — these may not be observable in this dataset if no actual failures occurred during the endurance run. Error recovery is now captured automatically via the state-change pattern (every boolean threshold that activates also produces a recovery when the condition clears).
 
 ### Future work
 
