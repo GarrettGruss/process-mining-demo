@@ -1,14 +1,16 @@
 # Overview
 
-This project will take the FSAE data, apply a wavelet denoising function across the time-series data, classify events using an event extractor that adheres to the SHIP safety model, then perform social network analysis (SNA) to construct event failure graphs.
+This project will take the FSAE data, classify events using a config-driven dispatcher that adheres to the SHIP safety model, then perform process mining analysis to construct event failure graphs. A wavelet denoising step and SNA sociogram are stretch goals.
 
 ## Pipeline
 
 ```mermaid
 flowchart LR
     A[Raw Telemetry] --> B[WaveletDenoiser]:::stretch
-    B --> C[SHIPEventClassifier]
-    C -.uses.-> C2[EventClassifier]
+    B --denoised df--> C[SHIP Dispatcher]
+    B --energy change events--> D
+    C -.reads.-> C2[SHIP Config]
+    C -.calls.-> C3[EventClassifier]
     C --> D[CaseGenerator]
     D --> E[Analysis]
 
@@ -19,25 +21,13 @@ flowchart LR
     classDef stretch fill:#f9a825,stroke:#f57f17,color:#000
 ```
 
-**Legend**: Yellow nodes are stretch goals. Base pipeline runs without them — raw telemetry feeds directly into `SHIPEventClassifier` (no denoising), and analysis covers DFG and Variant Analysis (no SNA).
+**Legend**: Yellow nodes are stretch goals. Base pipeline runs without them — raw telemetry feeds directly into the SHIP dispatcher (no denoising, no energy-based change detection), and analysis covers DFG and Variant Analysis (no SNA).
 
-## Class Diagrams
+## Design
 
-### WaveletDenoiser
+### EventClassifier (reuse from example_4)
 
-```mermaid
-classDiagram
-    class WaveletDenoiser {
-        -pd.DataFrame df
-        -str wavelet
-        -int level
-        +__init__(df, wavelet, level)
-        +denoise_channel(column) pd.Series
-        +denoise_all(columns) pd.DataFrame
-    }
-```
-
-### EventClassifier
+Stateless detection methods for extracting discrete events from a DataFrame column. Provides threshold detection, state change detection, combined conditions, and local extrema detection. These methods are the building blocks called by the SHIP dispatcher. They have no knowledge of SHIP or subsystems. Refer to `examples/example_4/event_extractor.py` for the existing implementation.
 
 ```mermaid
 classDiagram
@@ -48,68 +38,111 @@ classDiagram
         +detect_state_change_events(column, event_name_prefix, ignore_nan) pd.DataFrame
         +detect_combined_condition_events(conditions, event_name, mode) pd.DataFrame
         +detect_local_extrema_events(column, event_name_max, event_name_min, window_size, prominence) pd.DataFrame
-        +detect_change_points(column, event_name, model, penalty, min_size) pd.DataFrame
     }
 ```
 
-### SHIPEventClassifier
+### SHIP Config
 
-```mermaid
-classDiagram
-    class SHIPEventClassifier {
-        -pd.DataFrame df
-        -List~Subsystem~ subsystems
-        +__init__(df, subsystems)
-        +classify_events() pd.DataFrame
-    }
+A flat list of event definitions. Each entry maps a detection method call to a subsystem and SHIP transition type. No class hierarchy — adding or changing events is a config edit.
 
-    class Subsystem {
-        -str name
-        -List~Callable~ error_activation
-        -List~Callable~ error_recovery
-        -List~Callable~ failsafe_trip
-        -List~Callable~ dangerous_failure
-        -List~Callable~ operational
-    }
-
-    SHIPEventClassifier --> "*" Subsystem
+```python
+SHIP_EVENTS = [
+    {
+        "subsystem": "Engine",
+        "transition_type": "error_activation",
+        "method": "detect_threshold_events",
+        "args": {
+            "column": "f88.ect1_°f",
+            "threshold": 220,
+            "condition": ">",
+            "event_name": "engine_overheating",
+        },
+    },
+    {
+        "subsystem": "Lubrication",
+        "transition_type": "error_activation",
+        "method": "detect_threshold_events",
+        "args": {
+            "column": "f88.oil.p1_psi",
+            "threshold": 15,
+            "condition": "<",
+            "event_name": "low_oil_pressure",
+        },
+    },
+    # ... one entry per event
+]
 ```
 
-### CaseGenerator
+### SHIP Dispatcher
 
-```mermaid
-classDiagram
-    class CaseGenerator {
-        -pd.DataFrame event_log
-        +__init__(event_log)
-        +generate_cases_time_window(trigger_event, time_before, time_after, case_prefix) pd.DataFrame
-    }
+A single function that iterates over `SHIP_EVENTS`, calls the corresponding `EventClassifier` method, tags results with `subsystem` and `transition_type`, and concatenates into one event log. Replaces the `SHIPEventClassifier` and `Subsystem` classes.
+
+```python
+def dispatch_ship_events(df: pd.DataFrame, config: list[dict]) -> pd.DataFrame:
+    ec = EventClassifier(df)
+    frames = []
+    for entry in config:
+        method = getattr(ec, entry["method"])
+        events = method(**entry["args"])
+        events["subsystem"] = entry["subsystem"]
+        events["transition_type"] = entry["transition_type"]
+        frames.append(events)
+    return pd.concat(frames, ignore_index=True).sort_values("timestamp")
 ```
-
-## Implementation
-
-### Step 1: WaveletDenoiser (stretch goal)
-
-Apply wavelet denoising to clean raw sensor channels before event detection. Decompose each channel with `pywt.wavedec()`, threshold small coefficients with `pywt.threshold()`, and reconstruct with `pywt.waverec()`. Returns a cleaned DataFrame with the same shape as the input.
-
-### Step 2: EventClassifier
-
-Stateless detection methods for extracting discrete events from a DataFrame column. Provides threshold detection, state change detection, combined conditions, and local extrema detection. As a stretch goal, a `detect_change_points()` method wraps the `ruptures` library (`Pelt` search with configurable cost model and penalty) to detect structural signal changes without manual thresholds. These methods are the building blocks — they are called by the `SHIPEventClassifier` but have no knowledge of SHIP or subsystems. Refer to `examples/example_4/event_extractor.py` for the existing implementation.
-
-### Step 3: SHIPEventClassifier
-
-Models the system as a collection of `Subsystem` objects. Each `Subsystem` has a name, four lists of callables for SHIP transition types (`error_activation`, `error_recovery`, `failsafe_trip`, `dangerous_failure`), and an `operational` list for normal operation events (e.g. gear shifts, braking events, lap crossings). Each callable is a bound `EventClassifier` method (e.g. `lambda ec: ec.detect_threshold_events("coolant_temp", 100, ">", "coolant_high")`). The `classify_events()` method iterates over subsystems, calls each detection function, and tags the resulting events with the subsystem name and transition type. Operational events are tagged with `transition_type="operational"` — they flow through the pipeline for DFG context and as `CaseGenerator` triggers but are excluded from SNA failure propagation analysis.
 
 Output DataFrame columns: `timestamp`, `activity`, `subsystem`, `transition_type`, `value`.
 
+### CaseGenerator (reuse from example_4)
+
+Time-window method that takes an event of interest (EoI) and constructs a trace from the events before (`time_before`) and after (`time_after`). Both `time_before` and `time_after` must be greater than 0. The `subsystem` and `transition_type` columns from the dispatcher output are passed through to the case output. The `subsystem` column is mapped to PM4Py's `org:resource` field to enable SNA metric computation. Refer to `examples/example_4/case_generator.py`.
+
+### WaveletDenoiser (stretch goal)
+
+```mermaid
+classDiagram
+    class WaveletDenoiser {
+        -pd.DataFrame df
+        -str wavelet
+        -int level
+        +__init__(df, wavelet, level)
+        +denoise_channel(column) pd.Series
+        +denoise_all(columns) pd.DataFrame
+        +compute_energy(column) pd.Series
+        +detect_energy_change_points(column, event_name, threshold_sigma) pd.DataFrame
+    }
+```
+
+Handles both signal cleaning and structural change detection using a single wavelet decomposition, eliminating the need for the `ruptures` library.
+
+**Denoising.** Decompose each channel with `pywt.wavedec()`, threshold small detail coefficients with `pywt.threshold()`, and reconstruct with `pywt.waverec()`. Returns a cleaned DataFrame with the same shape as the input.
+
+**Coefficient energy.** `compute_energy()` computes a windowed energy profile from the wavelet detail coefficients. For each decomposition level, square the detail coefficients and sum them within a sliding window to produce a time-aligned energy series. Spikes in this series indicate regions where the signal's frequency content changes — structural transitions rather than simple threshold crossings.
+
+**Energy-based change detection.** `detect_energy_change_points()` thresholds the energy profile (e.g. energy > mean + `threshold_sigma` * std) and emits events at the rising edges. This replaces the `ruptures`-based `detect_change_points()` approach: same goal (find structural signal changes without manual thresholds), but reuses the wavelet decomposition already computed for denoising and avoids an external dependency. The output DataFrame matches the `EventClassifier` format (`timestamp`, `activity`, `value`) so it can be concatenated directly into the SHIP dispatcher output.
+
+## Implementation
+
+### Step 1: EventClassifier
+
+Port `EventExtractor` from example_4 to `EventClassifier`, preserving the existing API. The `detect_change_points()` method (ruptures) is removed — structural change detection is handled by `WaveletDenoiser` in the stretch goal. No other behavioral changes — this is a rename and copy into the example_5 module.
+
+### Step 2: SHIP Config
+
+Define `SHIP_EVENTS` as a Python list of dicts. Each dict specifies `subsystem`, `transition_type`, `method` (name of an `EventClassifier` method), and `args` (keyword arguments for that method). Threshold values and detection parameters are determined from data exploration. See the SHIP Event Mapping section below for the full event list.
+
+### Step 3: SHIP Dispatcher
+
+Implement `dispatch_ship_events()` as shown above. The function takes a raw telemetry DataFrame and the config list, returns a tagged event log. This is the only new code beyond config.
+
 ### Step 4: CaseGenerator
 
-Time-window method that takes an event of interest (EoI) and constructs a trace from the events before (`time_before`) and after (`time_after`). Both `time_before` and `time_after` must be greater than 0. The `subsystem` and `transition_type` columns from the `SHIPEventClassifier` output are passed through to the case output. The `subsystem` column is mapped to PM4Py's `org:resource` field to enable SNA metric computation. Refer to `examples/example_4/case_generator.py`.
+Reuse `CaseGenerator` from example_4. The dispatcher output already contains `subsystem` and `transition_type` columns, so no modifications are needed.
 
 ### Step 5: Analysis
 
 - **DFG Analysis**: Directly-Follows Graphs showing event ordering, timing, and transition counts. Refer to `examples/example_4/example_4_part_2.ipynb`.
 - **Variant Analysis**: Identify unique event sequences across cases. Refer to `examples/example_4/example_4_part_2.ipynb`.
+- **WaveletDenoiser (stretch goal)**: If implemented, insert before the dispatcher. The denoised DataFrame replaces the raw telemetry as input to the SHIP dispatcher. Energy-based change point events are concatenated into the dispatcher output (tagged with the relevant subsystem and `transition_type`) before passing to the `CaseGenerator`.
 - **SNA Sociogram (stretch goal)**: Map subsystems to performers, SHIP transition types to activities, and failure instances to cases. Compute handover-of-work (failure propagation), subcontracting (feedback loops), working-together (common-cause failure), and performer-by-activity similarity (shared failure profiles). Filter the sociogram by transition type to answer targeted safety questions.
 
 ## Subsystem Definitions
@@ -189,13 +222,12 @@ These events describe normal operation or session context. They are useful as tr
 
 ### Implementation
 
-- **Threshold calibration required.** Subsystems, events, and detection methods are defined, but specific threshold values and detection parameters need to be determined from the data (e.g. what oil pressure constitutes "low," what bumpstop value constitutes a "hit"). This is implementation work, not a design gap.
-- **Not all SHIP transitions are populated.** Error recovery, failsafe trip, and dangerous failure callables are sparse — most subsystems only have error activation rules. Recovery events require defining "return to nominal" thresholds, and failsafe/dangerous failure events may not be observable in this dataset if no actual failures occurred during the endurance run.
+- **Threshold calibration required.** Events and detection methods are defined, but specific threshold values and detection parameters need to be determined from the data (e.g. what oil pressure constitutes "low," what bumpstop value constitutes a "hit"). This is implementation work, not a design gap.
+- **Not all SHIP transitions are populated.** Error recovery, failsafe trip, and dangerous failure events are sparse — most subsystems only have error activation rules. Recovery events require defining "return to nominal" thresholds, and failsafe/dangerous failure events may not be observable in this dataset if no actual failures occurred during the endurance run.
 
 ### Future work
 
-- **Wavelet parameters have no selection method.** The `WaveletDenoiser` requires a wavelet basis and decomposition level, but there is no guidance on how to choose them for this dataset. Incorrect parameters could over-denoise (removing real transients) or under-denoise (leaving noise that generates false events).
-
+- **Wavelet parameters have no selection method.** The `WaveletDenoiser` requires a wavelet basis and decomposition level, but there is no guidance on how to choose them for this dataset. Incorrect parameters could over-denoise (removing real transients) or under-denoise (leaving noise that generates false events). The energy threshold (`threshold_sigma`) for change detection is similarly data-dependent — too sensitive and noise produces false change points, too conservative and real transitions are missed.
 - **SHIP classification is manually defined, not detected.** Transition types are encoded as static rules chosen upfront. If a transition is misclassified (e.g. normal variance labeled as error activation), all downstream analysis inherits that error. A validation step or feedback mechanism could address this.
 - **Time-window sizing is unresolved.** The `CaseGenerator` window parameters directly determine which events appear in each case. Too small and propagation chains are missed; too large and unrelated events appear causally linked. Sensitivity analysis across window sizes would mitigate this.
 - **Event volume vs. graph interpretability.** Multiple subsystems with multiple detectors across four transition types can produce dense event logs. The resulting DFGs and sociograms may be too complex to interpret without filtering or aggregation strategies.
