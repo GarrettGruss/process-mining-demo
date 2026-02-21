@@ -169,28 +169,31 @@ Handles both signal cleaning and structural change detection using a single wave
 
 ## Implementation
 
-### Step 1: EventClassifier
+### Step 1: EventClassifier ✓
 
-Port `EventExtractor` from example_4 to `EventClassifier`, preserving the existing API. The `detect_change_points()` method (ruptures) is removed — structural change detection is handled by `WaveletDenoiser` in the stretch goal. No other behavioral changes — this is a rename and copy into the example_5 module.
+`event_classifier.py` — `EventExtractor` renamed to `EventClassifier`; `detect_change_points()` (ruptures) removed. One behavioral addition: `detect_state_change_events` checks `pd.api.types.is_bool_dtype()` and formats boolean transitions as `"False->True"` / `"True->False"` rather than `"0->1"` / `"1->0"`. This is required for the dispatcher's `tmap` lookup to work on derived boolean columns. All `shift(1).fillna(False)` calls replaced with `shift(1, fill_value=False)` to avoid a pandas FutureWarning on object-dtype boolean series.
 
-### Step 2: SHIP Config
+### Step 2: SHIP Config ✓
 
-Define `SHIP_EVENTS` as a Python list of dicts. Each dict specifies `subsystem`, `transition_type`, `method` (name of an `EventClassifier` method), and `args` (keyword arguments for that method). Threshold values and detection parameters are determined from data exploration. See the SHIP Event Mapping section below for the full event list.
+`ship_config.py` — 16 entries across 6 subsystems. All thresholds calibrated from data (190,587 rows × 76 columns). See the **Data Notes** section for the findings that drove each calibration decision.
 
-### Step 3: SHIP Dispatcher
+### Step 3: SHIP Dispatcher ✓
 
-Implement `dispatch_ship_events()` as shown above. The function takes a raw telemetry DataFrame and the config list, returns a tagged event log. This is the only new code beyond config.
+`ship_dispatcher.py` — implemented as designed. Two additions beyond the spec:
+- Missing columns are skipped with a `warnings.warn()` call rather than raising, so a partial config runs without crashing on channels absent from a given dataset.
+- A `KNOWN ISSUE` comment documents the heterogeneous `value` dtype problem (bool/float/NaN mixing across detector methods triggers a pandas FutureWarning on `pd.concat`). Current behavior is correct. Future fix: `_validate_event_frame()` helper or pandera schema that casts `value` to `float64` before appending.
 
-### Step 4: CaseGenerator
+### Step 4: CaseGenerator ✓
 
-Reuse `CaseGenerator` from example_4. The dispatcher output already contains `subsystem` and `transition_type` columns, so no modifications are needed.
+Reused unchanged from `examples/example_4/case_generator.py`. The `subsystem` and `transition_type` columns are preserved through the `window_events = self.event_log[in_window].copy()` call with no modifications needed.
 
-### Step 5: Analysis
+### Step 5: Analysis ✓
 
-- **DFG Analysis**: Directly-Follows Graphs showing event ordering, timing, and transition counts. Refer to `examples/example_4/example_4_part_2.ipynb`.
-- **Variant Analysis**: Identify unique event sequences across cases. Refer to `examples/example_4/example_4_part_2.ipynb`.
-- **WaveletDenoiser (stretch goal)**: If implemented, the denoised DataFrame replaces the raw telemetry as input to the SHIP dispatcher. Energy-based change point events are registered as `SHIP_EVENTS` config entries (with `subsystem` and `transition_type` like any other event) and dispatched through the same loop — the dispatcher routes `detect_energy_change_points` calls to the `WaveletDenoiser` instance.
-- **SNA Sociogram (stretch goal)**: Map subsystems to performers, SHIP transition types to activities, and failure instances to cases. Compute handover-of-work (failure propagation), subcontracting (feedback loops), working-together (common-cause failure), and performer-by-activity similarity (shared failure profiles). Filter the sociogram by transition type to answer targeted safety questions.
+`example_5.ipynb` — full pipeline notebook. Sections: data loading, threshold calibration table, SHIP dispatch, event timeline plot, case generation, PM4Py event log prep, DFG (frequency + performance), variant analysis (chevron), subsystem-filtered DFG, and a stretch-goal appendix cell for the WaveletDenoiser.
+
+**WaveletDenoiser (stretch goal)** — `wavelet_denoiser.py` — implemented but not wired into the base pipeline. The appendix cell in the notebook shows how to connect it. Requires `pip install PyWavelets`.
+
+**SNA Sociogram (stretch goal)** — not yet implemented. The `org:resource` mapping (`subsystem` → `org:resource`) is already applied in the notebook's PM4Py prep step, so PM4Py's SNA functions can be called directly on the event log without further changes.
 
 ## Subsystem Definitions
 
@@ -268,11 +271,53 @@ These events describe normal operation or session context. They are useful as tr
 - **Track position**: straight section, technical section, elevation change
 - **Session**: fastest sector, lap consistency
 
+## Data Notes
+
+Observations from exploring `FSAE_Endurance_Full_parsed.csv` (190,587 rows, 100 Hz, ~31 min endurance session).
+
+### Channel availability
+
+- **`roll angle_unit`** — always `0.0`. Channel is present but unpopulated in this dataset. The roll event config entry is retained for completeness but will produce zero events.
+- **`f88.v batt_v`** — listed in the Electrical subsystem definition but this exact column name was not found in the parsed CSV. `battery_v` (without the `f88.v` prefix) is what exists and is used instead.
+
+### Key channel distributions and threshold decisions
+
+| Channel | Min | Mean | Max | p95 | Threshold used | Rationale |
+|---|---|---|---|---|---|---|
+| `f88.ect1_°f` (coolant temp) | 0 | 148 °F | 169 °F | 164 °F | **> 160 °F** | Max is only 169 °F — 220 °F design spec never fires. 160 °F sits above the 90th pct (163 °F) and catches the true high-temp tail. |
+| `f88.oil.p1_psi` (oil pressure) | −0.8 | 30.7 | 90.6 | — | **< 5 psi** (low), **> 80 psi** (spike) | Pressure drops heavily during idle/startup (28% of rows below 15 psi) — a 15 psi threshold would flood the event log. 5 psi separates genuinely dangerous low-pressure from normal low-RPM drop. Upper bound 80 psi catches anomalous spikes near the observed max. |
+| `battery_v` (battery voltage) | 12.9 | 13.9 | 15.0 | — | **< 13.2 V** | Alternator keeps voltage very stable (std = 0.43 V). The 11.5 V design spec never fires. 13.2 V (below the 1st percentile) catches brief sag events. |
+| `gps.nsat_#` (GPS satellites) | 7 | — | 11 | — | **< 8** | Range is 7–11 sat. The design spec threshold of 4 never fires; < 8 catches the observed minimum (7 sat) as a degradation event. |
+| `fl.bumpstop_unit` | 0 | 0.35 | 5.0 | 5.0 | **> 0.0** | Channel is binary in practice: either 0 (no contact) or 5 (hard contact). Any non-zero value means the bumpstop is engaged. Same pattern holds for fr/rl/rr. |
+| `f88.rpm_rpm` | 0 | — | 12,827 | — | **> 12,000 at speed > 30 mph** | 10,000 RPM at speed produced 847 matching rows — normal operation at full throttle. Raised to 12,000 to target near-limiter excursions. |
+
+### Observed event counts (base pipeline run)
+
+| Subsystem | error_activation | error_recovery | Total |
+|---|---|---|---|
+| Suspension | 72 | 72 | 144 |
+| Brakes | 3 | 0 | 3 |
+| Engine | 45 | 44 | 89 |
+| Lubrication | 274 | 274 | 548 |
+| Electrical | 7 | 7 | 14 |
+| Drivetrain | 3 | 0 | 3 |
+| **Total** | **404** | **397** | **801** |
+
+404 trigger events → 404 cases → 10,727 event-case assignments (avg 26.6 events/case) with a 10 s pre-trigger / 30 s post-trigger window.
+
+### Channels not implemented
+
+The following events from the SHIP Event Mapping are not in the current config due to implementation complexity or missing threshold data:
+
+- **Bottoming event** — shock position data (`*.shock.pos.zero_mm`) requires knowing each corner's physical travel limit, which is not in the dataset metadata.
+- **Wrong gear** — gear-ratio-to-RPM/speed mapping requires transmission specifications not available in the telemetry file.
+- **Shift under load** — requires detecting gear-change events conditioned on simultaneous throttle position; the current `detect_combined_condition_events` signature can't express this (it AND/OR conditions on the same timestamp, not sequential events).
+
 ## Risks
 
 ### Implementation
 
-- **Threshold calibration required.** Events and detection methods are defined, but specific threshold values and detection parameters need to be determined from the data (e.g. what oil pressure constitutes "low," what bumpstop value constitutes a "hit"). This is implementation work, not a design gap.
+- **Threshold calibration required.** ~~Events and detection methods are defined, but specific threshold values and detection parameters need to be determined from the data.~~ Done — see Data Notes above. Thresholds should be re-validated if a different session or car configuration is used.
 - **Not all SHIP transitions are populated.** Failsafe trip and dangerous failure events are empty — these may not be observable in this dataset if no actual failures occurred during the endurance run. Error recovery is now captured automatically via the state-change pattern (every boolean threshold that activates also produces a recovery when the condition clears).
 
 ### Future work
@@ -282,3 +327,6 @@ These events describe normal operation or session context. They are useful as tr
 - **Time-window sizing is unresolved.** The `CaseGenerator` window parameters directly determine which events appear in each case. Too small and propagation chains are missed; too large and unrelated events appear causally linked. Sensitivity analysis across window sizes would mitigate this.
 - **Event volume vs. graph interpretability.** Multiple subsystems with multiple detectors across four transition types can produce dense event logs. The resulting DFGs and sociograms may be too complex to interpret without filtering or aggregation strategies.
 - **No ground truth or validation approach.** The pipeline will always produce some graph — there is no mechanism to verify whether edges represent real failure propagation or coincidental co-occurrence within time windows.
+- **`value` dtype inconsistency.** `EventClassifier` methods return heterogeneous value dtypes (bool from state-change on derived columns, float from threshold events, NaN from combined conditions). This causes a pandas `FutureWarning` on `pd.concat`. Fix is a `_validate_event_frame()` helper or pandera schema that casts `value` to `float64` before concatenation in the dispatcher.
+- **`roll angle_unit` is unpopulated.** The channel exists in the parsed CSV but is always zero. If roll data is needed, it may need to be derived from accelerometer channels (`acc.lateral_g`) or sourced from a different data file.
+- **Lubrication dominates the event log.** Oil pressure (274 activations + 274 recoveries = 548 events, 68% of total) can drown out rarer subsystem interactions in the DFG. Consider filtering by subsystem or increasing the threshold before running variant analysis.
