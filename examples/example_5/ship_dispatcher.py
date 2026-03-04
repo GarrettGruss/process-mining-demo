@@ -6,7 +6,7 @@ Usage:
 
     event_log = dispatch_ship_events(df, SHIP_EVENTS)
 
-Output DataFrame columns: timestamp, activity, subsystem, transition_type, value.
+Output DataFrame columns: timestamp, activity, event_name, subsystem, transition_type, value.
 """
 
 import warnings
@@ -49,8 +49,8 @@ def dispatch_ship_events(
                 name exists on the denoiser are routed to it instead of EventClassifier.
 
     Returns:
-        DataFrame with columns: timestamp, activity, subsystem, transition_type, value,
-        sorted ascending by timestamp.
+        DataFrame with columns: timestamp, activity, event_name, subsystem, transition_type,
+        value, sorted ascending by timestamp.
     """
     _OPS = {
         ">": _op.gt,
@@ -95,6 +95,7 @@ def dispatch_ship_events(
                 }
                 events["transition_type"] = events["activity"].map(tmap)
                 events = events.dropna(subset=["transition_type"])
+                events["event_name"] = prefix
 
             else:
                 # Simple pattern — validate columns before calling
@@ -117,6 +118,7 @@ def dispatch_ship_events(
                 target = wd if (wd is not None and hasattr(wd, entry["method"])) else ec
                 events = getattr(target, entry["method"])(**args)
                 events["transition_type"] = entry["transition_type"]
+                events["event_name"] = args.get("event_name", args.get("event_name_prefix", ""))
 
             events["subsystem"] = subsystem
             # KNOWN ISSUE: EventClassifier methods return heterogeneous value dtypes.
@@ -141,7 +143,7 @@ def dispatch_ship_events(
 
     if not frames:
         return pd.DataFrame(
-            columns=["timestamp", "activity", "subsystem", "transition_type", "value"]
+            columns=["timestamp", "activity", "event_name", "subsystem", "transition_type", "value"]
         )
 
     return (

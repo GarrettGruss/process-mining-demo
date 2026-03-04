@@ -1,0 +1,28 @@
+\begin{thebibliography}{1}
+
+\bibitem{berti2019}
+Alessandro Berti, Sebastiaan~J. van Zelst, and Wil M.~P. van~der Aalst.
+\newblock Process mining for {Python} ({PM4Py}): Bridging the gap between process- and data science.
+\newblock In {\em Proceedings of the 1st International Conference on Process Mining (ICPM 2019), Demo Track}, pages 13--16, 2019.
+
+\bibitem{bishop1995}
+Peter~G. Bishop and Robin~E. Bloomfield.
+\newblock The {SHIP} safety case approach.
+\newblock In {\em Proceedings of SafeComp95}, pages 437--451, Belgirate, Italy, 1995.
+
+\bibitem{guralnik1999}
+Valery Guralnik and Jaideep Srivastava.
+\newblock Event detection from time series data.
+\newblock In {\em Proceedings of the Fifth {ACM SIGKDD} International Conference on Knowledge Discovery and Data Mining (KDD '99)}, pages 33--42, 1999.
+
+\bibitem{vanderaalst2005}
+Wil M.~P. van~der Aalst, Hajo~A. Reijers, and Minseok Song.
+\newblock Discovering social networks from event logs.
+\newblock {\em Computer Supported Cooperative Work}, 14:549--593, 2005.
+
+\bibitem{vanderaalst2004}
+Wil M.~P. van~der Aalst, A.~J. M.~M. Weijters, and L.~Maruster.
+\newblock Workflow mining: Discovering process models from event logs.
+\newblock {\em {IEEE} Transactions on Knowledge and Data Engineering}, 16(9):1128--1142, 2004.
+
+\end{thebibliography}
